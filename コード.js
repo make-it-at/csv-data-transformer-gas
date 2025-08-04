@@ -314,7 +314,10 @@ function executePPformatExport(options = {}) {
     // CSVエクスポート実行
     const result = exportPPformatToCSV(options);
     
-    // ダウンロードURL生成
+    // データURIを使用した直接ダウンロード用URL生成
+    const dataUri = createDataUri(result.csvContent, result.fileName);
+    
+    // Google Drive経由のダウンロードURL生成（フォールバック用）
     const downloadInfo = createDownloadUrl(result.blob, result.fileName);
     
     const processingTime = new Date().getTime() - startTime;
@@ -323,8 +326,9 @@ function executePPformatExport(options = {}) {
     return {
       success: true,
       message: `PPformat CSVエクスポートが完了しました。${result.rowCount}行を出力しました。`,
-      downloadUrl: downloadInfo.downloadUrl,
-      fileName: downloadInfo.fileName,
+      downloadUrl: dataUri, // データURIを優先
+      fallbackUrl: downloadInfo.downloadUrl, // フォールバック用
+      fileName: result.fileName,
       fileId: downloadInfo.fileId,
       rowCount: result.rowCount,
       processingTime: processingTime
@@ -368,7 +372,10 @@ function executeMFformatExport(options = {}) {
     // CSVエクスポート実行
     const result = exportMFformatToCSV(options);
     
-    // ダウンロードURL生成
+    // データURIを使用した直接ダウンロード用URL生成
+    const dataUri = createDataUri(result.csvContent, result.fileName);
+    
+    // Google Drive経由のダウンロードURL生成（フォールバック用）
     const downloadInfo = createDownloadUrl(result.blob, result.fileName);
     
     const processingTime = new Date().getTime() - startTime;
@@ -377,8 +384,9 @@ function executeMFformatExport(options = {}) {
     return {
       success: true,
       message: `MFformat CSVエクスポートが完了しました。${result.rowCount}行を出力しました。`,
-      downloadUrl: downloadInfo.downloadUrl,
-      fileName: downloadInfo.fileName,
+      downloadUrl: dataUri, // データURIを優先
+      fallbackUrl: downloadInfo.downloadUrl, // フォールバック用
+      fileName: result.fileName,
       fileId: downloadInfo.fileId,
       rowCount: result.rowCount,
       processingTime: processingTime
@@ -396,5 +404,36 @@ function executeMFformatExport(options = {}) {
       error: error.message,
       processingTime: processingTime
     };
+  }
+}
+
+/**
+ * データURIを使用した直接ダウンロード用URL生成
+ * 
+ * @param {string} csvContent - CSVコンテンツ
+ * @param {string} fileName - ファイル名
+ * @return {string} データURI
+ */
+function createDataUri(csvContent, fileName) {
+  try {
+    // UTF-8 BOMを追加
+    const csvWithBom = '\uFEFF' + csvContent;
+    
+    // Base64エンコード
+    const base64Content = Utilities.base64Encode(csvWithBom, Utilities.Charset.UTF_8);
+    
+    // データURIの生成
+    const dataUri = `data:text/csv;charset=utf-8;base64,${base64Content}`;
+    
+    Logger.log(`[main.gs] データURI生成完了: ${fileName}`);
+    
+    return dataUri;
+    
+  } catch (error) {
+    Logger.log(`[main.gs] データURI生成エラー: ${error.message}`);
+    
+    // フォールバック: シンプルなデータURI
+    const encodedContent = encodeURIComponent('\uFEFF' + csvContent);
+    return `data:text/csv;charset=utf-8,${encodedContent}`;
   }
 }

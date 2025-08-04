@@ -873,13 +873,16 @@
               exportResult.className = 'result-message success';
               exportResult.innerHTML = `
                 <div>${result.message}</div>
-                <div style="margin-top: 8px;">
-                  <a href="${result.downloadUrl}" target="_blank" class="btn btn-primary" style="display: inline-block; padding: 8px 16px; text-decoration: none; border-radius: 4px;">
-                    📥 ${result.fileName} をダウンロード
-                  </a>
+                <div style="margin-top: 8px; color: #4CAF50;">
+                  ✅ ${result.fileName} のダウンロードが開始されました
                 </div>
               `;
               showStatus('success', result.message);
+              
+              // 直接ダウンロード実行
+              if (result.downloadUrl) {
+                triggerDownload(result.downloadUrl, result.fileName);
+              }
               
               // シート状態を更新
               loadSheetStatus();
@@ -934,6 +937,33 @@
             showStatus('error', 'ログクリアに失敗しました。');
           })
           .clearOldLogs(0); // 全ログを削除
+      }
+    }
+
+    // 直接ダウンロード実行
+    function triggerDownload(url, filename) {
+      try {
+        // 非表示のリンク要素を作成
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        link.style.display = 'none';
+        
+        // ドキュメントに追加してクリック
+        document.body.appendChild(link);
+        link.click();
+        
+        // クリーンアップ
+        setTimeout(() => {
+          document.body.removeChild(link);
+        }, 100);
+        
+        console.log(`[triggerDownload] ダウンロード開始: ${filename}`);
+      } catch (error) {
+        console.error(`[triggerDownload] ダウンロードエラー: ${error.message}`);
+        
+        // フォールバック: 新しいタブで開く
+        window.open(url, '_blank');
       }
     }
 

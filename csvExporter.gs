@@ -71,6 +71,7 @@ function exportPPformatToCSV(options = {}) {
       success: true,
       fileName: fileName,
       blob: blob,
+      csvContent: csvContent, // 直接ダウンロード用
       rowCount: data.length,
       processingTime: processingTime
     };
@@ -135,6 +136,7 @@ function exportMFformatToCSV(options = {}) {
       success: true,
       fileName: fileName,
       blob: blob,
+      csvContent: csvContent, // 直接ダウンロード用
       rowCount: data.length,
       processingTime: processingTime
     };
