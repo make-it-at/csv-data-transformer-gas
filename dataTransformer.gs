@@ -298,7 +298,7 @@ function buildPPformatRow(sourceRow, sourceHeaders, transformations) {
     '-',                     // 変換レート（円）
     '-',                     // 利用国
     '-',                     // 取引内容
-    content || partner,      // 取引先（内容を優先、空白の場合は相手）
+    partner || '',           // 取引先（相手）
     '-',                     // 取引方法
     '-',                     // 支払い区分
     '-',                     // 利用者
@@ -535,7 +535,7 @@ function buildMFformatRow(sourceRow, sourceHeaders, transformations, transaction
     debitAccount,                     // 借方勘定科目
     '',                               // 借方補助科目
     '',                               // 借方部門
-    content || '',                    // 借方取引先（内容を使用）
+    type === '利用' ? (partner || '') : '',  // 借方取引先（利用時のみ相手）
     taxCategory,                      // 借方税区分
     '',                               // 借方インボイス
     numericAmount,                    // 借方金額(円)
@@ -543,7 +543,7 @@ function buildMFformatRow(sourceRow, sourceHeaders, transformations, transaction
     creditAccount,                    // 貸方勘定科目
     '',                               // 貸方補助科目
     '',                               // 貸方部門
-    content || '',                    // 貸方取引先（内容を使用）
+    type === '獲得' ? (partner || '') : '',  // 貸方取引先（獲得時のみ相手）
     taxCategory,                      // 貸方税区分
     '',                               // 貸方インボイス
     numericAmount,                    // 貸方金額(円)
