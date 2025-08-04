@@ -437,3 +437,96 @@ function createDataUri(csvContent, fileName) {
     return `data:text/csv;charset=utf-8,${encodedContent}`;
   }
 }
+
+/**
+ * MFformat設定の取得
+ * 
+ * @return {Object} MFformat設定
+ */
+function getMFformatSettings() {
+  try {
+    const settings = TRANSFER_CONFIG.DEFAULT_SETTINGS.mfformat;
+    
+    return {
+      success: true,
+      settings: settings
+    };
+    
+  } catch (error) {
+    Logger.log(`[main.gs] MFformat設定取得エラー: ${error.message}`);
+    
+    return {
+      success: false,
+      error: error.message
+    };
+  }
+}
+
+/**
+ * MFformat設定の更新
+ * 
+ * @param {Object} newSettings - 新しい設定
+ * @return {Object} 更新結果
+ */
+function updateMFformatSettings(newSettings) {
+  try {
+    Logger.log('[main.gs] MFformat設定更新開始');
+    
+    // 設定の検証
+    if (!newSettings || typeof newSettings !== 'object') {
+      throw new Error('無効な設定データです');
+    }
+    
+    // 設定をマージ（深いコピー）
+    const currentSettings = JSON.parse(JSON.stringify(TRANSFER_CONFIG.DEFAULT_SETTINGS.mfformat));
+    
+    if (newSettings.transformations) {
+      if (newSettings.transformations.accounts) {
+        currentSettings.transformations.accounts = Object.assign(
+          {},
+          currentSettings.transformations.accounts,
+          newSettings.transformations.accounts
+        );
+      }
+      
+      if (newSettings.transformations.taxCategories) {
+        currentSettings.transformations.taxCategories = Object.assign(
+          {},
+          currentSettings.transformations.taxCategories,
+          newSettings.transformations.taxCategories
+        );
+      }
+      
+      if (typeof newSettings.transformations.includeMemo === 'boolean') {
+        currentSettings.transformations.includeMemo = newSettings.transformations.includeMemo;
+      }
+    }
+    
+    // 設定を更新（実際の実装では永続化が必要）
+    TRANSFER_CONFIG.DEFAULT_SETTINGS.mfformat = currentSettings;
+    
+    // ログ記録
+    writeLog('INFO', 'MFformat設定更新完了', JSON.stringify(currentSettings), {
+      newSettings: currentSettings
+    });
+    
+    Logger.log('[main.gs] MFformat設定更新完了');
+    
+    return {
+      success: true,
+      settings: currentSettings
+    };
+    
+  } catch (error) {
+    Logger.log(`[main.gs] MFformat設定更新エラー: ${error.message}`);
+    
+    writeLog('ERROR', 'MFformat設定更新エラー', error.message, {
+      newSettings: newSettings
+    });
+    
+    return {
+      success: false,
+      error: error.message
+    };
+  }
+}

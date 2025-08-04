@@ -78,11 +78,21 @@ const TRANSFER_CONFIG = {
       },
       transformations: {
         dateFormat: 'YYYY/MM/DD',
-        defaultAccount: {
-          debit: 'ポイント', // 借方勘定科目
-          credit: 'ポイント収益' // 貸方勘定科目
+        accounts: {
+          獲得: {
+            debit: 'ポイント',
+            credit: 'ポイント収益'
+          },
+          利用: {
+            debit: 'ポイント利用',
+            credit: 'ポイント'
+          }
         },
-        taxType: '対象外' // 税区分
+        taxCategories: {
+          獲得: '対象外',
+          利用: '対象外'
+        },
+        includeMemo: false // 仕訳メモを含めるかどうか
       }
     }
   },
@@ -452,18 +462,19 @@ function buildMFformatRow(sourceRow, sourceHeaders, transformations, transaction
   // 金額処理
   const numericAmount = Math.abs(parseFloat(amount.toString().replace(/[^\d.-]/g, '')) || 0);
   
-  // 勘定科目の決定
-  let debitAccount = transformations.defaultAccount.debit;
-  let creditAccount = transformations.defaultAccount.credit;
+  // 勘定科目の決定（ユーザー設定に基づく）
+  let debitAccount = '';
+  let creditAccount = '';
+  let taxCategory = '対象外';
   
-  if (type === '利用') {
-    // 利用時：ポイント使用 → 借方：費用、貸方：ポイント
-    debitAccount = 'ポイント利用';
-    creditAccount = 'ポイント';
-  } else if (type === '獲得') {
-    // 獲得時：ポイント取得 → 借方：ポイント、貸方：収益
-    debitAccount = 'ポイント';
-    creditAccount = 'ポイント収益';
+  if (transformations.accounts && transformations.accounts[type]) {
+    debitAccount = transformations.accounts[type].debit || '';
+    creditAccount = transformations.accounts[type].credit || '';
+  }
+  
+  // 税区分の決定（ユーザー設定に基づく）
+  if (transformations.taxCategories && transformations.taxCategories[type]) {
+    taxCategory = transformations.taxCategories[type];
   }
   
   // 現在時刻
@@ -478,7 +489,7 @@ function buildMFformatRow(sourceRow, sourceHeaders, transformations, transaction
     '',                               // 借方補助科目
     '',                               // 借方部門
     partner || '',                    // 借方取引先
-    transformations.taxType,          // 借方税区分
+    taxCategory,                      // 借方税区分
     '',                               // 借方インボイス
     numericAmount,                    // 借方金額(円)
     0,                                // 借方税額
@@ -486,12 +497,12 @@ function buildMFformatRow(sourceRow, sourceHeaders, transformations, transaction
     '',                               // 貸方補助科目
     '',                               // 貸方部門
     partner || '',                    // 貸方取引先
-    transformations.taxType,          // 貸方税区分
+    taxCategory,                      // 貸方税区分
     '',                               // 貸方インボイス
     numericAmount,                    // 貸方金額(円)
     0,                                // 貸方税額
     content || message || '',         // 摘要
-    `${type}:${id}`,                  // 仕訳メモ
+    transformations.includeMemo ? `${type}:${id}` : '',  // 仕訳メモ（設定により制御）
     '',                               // タグ
     '',                               // MF仕訳タイプ
     '',                               // 決算整理仕訳
