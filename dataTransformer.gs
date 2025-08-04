@@ -5,30 +5,85 @@
 
 // 定数定義
 const TRANSFER_CONFIG = {
+  // PPformat（PayPay履歴形式）の列定義
+  PPFORMAT_COLUMNS: [
+    '取引日',
+    '出金金額（円）',
+    '入金金額（円）',
+    '海外出金金額',
+    '通貨',
+    '変換レート（円）',
+    '利用国',
+    '取引内容',
+    '取引先',
+    '取引方法',
+    '支払い区分',
+    '利用者',
+    '取引番号'
+  ],
+  
+  // MFformat（マネーフォワード仕訳形式）の列定義
+  MFFORMAT_COLUMNS: [
+    '取引No',
+    '取引日',
+    '借方勘定科目',
+    '借方補助科目',
+    '借方部門',
+    '借方取引先',
+    '借方税区分',
+    '借方インボイス',
+    '借方金額(円)',
+    '借方税額',
+    '貸方勘定科目',
+    '貸方補助科目',
+    '貸方部門',
+    '貸方取引先',
+    '貸方税区分',
+    '貸方インボイス',
+    '貸方金額(円)',
+    '貸方税額',
+    '摘要',
+    '仕訳メモ',
+    'タグ',
+    'MF仕訳タイプ',
+    '決算整理仕訳',
+    '作成日時',
+    '作成者',
+    '最終更新日時',
+    '最終更新者'
+  ],
+  
   // デフォルト設定
   DEFAULT_SETTINGS: {
     ppformat: {
       enabled: true,
-      columnMapping: {
-        'ID': 'A',
-        '日付': 'B', 
-        '種別': 'C',
-        'ポイント数': 'D',
-        '相手': 'E'
+      filters: {
+        includeTypes: ['獲得', '利用'], // 含める種別
+        excludeTypes: [], // 除外する種別
+        minAmount: null, // 最小金額
+        maxAmount: null  // 最大金額
       },
-      filters: [],
-      transformations: []
+      transformations: {
+        dateFormat: 'YYYY/MM/DD HH:mm:ss', // 日付フォーマット
+        amountHandling: 'split' // 金額の処理方法（split: 獲得/利用で分ける, single: 単一列）
+      }
     },
     mfformat: {
       enabled: true,
-      columnMapping: {
-        'ID': 'A',
-        '内容': 'B',
-        'ポイント数': 'C', 
-        'メッセージ': 'D'
+      filters: {
+        includeTypes: ['獲得', '利用'],
+        excludeTypes: [],
+        minAmount: null,
+        maxAmount: null
       },
-      filters: [],
-      transformations: []
+      transformations: {
+        dateFormat: 'YYYY/MM/DD',
+        defaultAccount: {
+          debit: 'ポイント', // 借方勘定科目
+          credit: 'ポイント収益' // 貸方勘定科目
+        },
+        taxType: '対象外' // 税区分
+      }
     }
   },
   
@@ -123,7 +178,7 @@ function transferDataFromLPcsv(settings = null) {
 }
 
 /**
- * PPformatシートへの転記
+ * PPformatシートへの転記（PayPay履歴形式）
  * 
  * @param {Array<Array>} sourceData - ソースデータ
  * @param {Object} config - PPformat設定
@@ -133,11 +188,11 @@ function transferToPPformat(sourceData, config) {
   const targetSheet = getSheetSafely(SHEET_NAMES.PPFORMAT);
   
   // ヘッダー行の設定
-  const headers = extractHeaders(sourceData);
-  const targetHeaders = buildTargetHeaders(headers, config.columnMapping);
+  const sourceHeaders = extractHeaders(sourceData);
+  const targetHeaders = TRANSFER_CONFIG.PPFORMAT_COLUMNS;
   
   // データの変換
-  const transformedData = transformData(sourceData, config, headers);
+  const transformedData = transformToPPformatData(sourceData, config, sourceHeaders);
   
   // シートに書き込み
   writeDataToSheet(targetSheet, [targetHeaders, ...transformedData]);
@@ -149,7 +204,168 @@ function transferToPPformat(sourceData, config) {
 }
 
 /**
- * MFformatシートへの転記
+ * PPformat用データ変換
+ * 
+ * @param {Array<Array>} sourceData - ソースデータ
+ * @param {Object} config - 設定
+ * @param {Array<string>} sourceHeaders - ソースヘッダー
+ * @return {Array<Array>} 変換済みデータ
+ */
+function transformToPPformatData(sourceData, config, sourceHeaders) {
+  const transformedData = [];
+  
+  // ヘッダー行をスキップ（1行目）
+  for (let i = 1; i < sourceData.length; i++) {
+    const sourceRow = sourceData[i];
+    
+    // フィルタリング処理
+    if (!passesPPformatFilters(sourceRow, sourceHeaders, config.filters)) {
+      continue;
+    }
+    
+    // PayPay履歴形式に変換
+    const targetRow = buildPPformatRow(sourceRow, sourceHeaders, config.transformations);
+    
+    transformedData.push(targetRow);
+  }
+  
+  return transformedData;
+}
+
+/**
+ * PPformat行の構築
+ * 
+ * @param {Array} sourceRow - ソース行データ
+ * @param {Array<string>} sourceHeaders - ソースヘッダー
+ * @param {Object} transformations - 変換設定
+ * @return {Array} PPformat行データ
+ */
+function buildPPformatRow(sourceRow, sourceHeaders, transformations) {
+  // ソースデータのインデックス取得
+  const idIndex = sourceHeaders.indexOf('ID');
+  const dateIndex = sourceHeaders.indexOf('日付');
+  const typeIndex = sourceHeaders.indexOf('種別');
+  const contentIndex = sourceHeaders.indexOf('内容');
+  const amountIndex = sourceHeaders.indexOf('ポイント数');
+  const messageIndex = sourceHeaders.indexOf('メッセージ');
+  const partnerIndex = sourceHeaders.indexOf('相手');
+  
+  // ソースデータ取得
+  const id = sourceRow[idIndex] || '';
+  const date = sourceRow[dateIndex] || '';
+  const type = sourceRow[typeIndex] || '';
+  const content = sourceRow[contentIndex] || '';
+  const amount = sourceRow[amountIndex] || '';
+  const message = sourceRow[messageIndex] || '';
+  const partner = sourceRow[partnerIndex] || '';
+  
+  // 日付フォーマット変換
+  const formattedDate = formatDateForPPformat(date, transformations.dateFormat);
+  
+  // 金額処理（獲得/利用で出金・入金を分ける）
+  let withdrawAmount = '-'; // 出金金額
+  let depositAmount = '-';  // 入金金額
+  
+  if (transformations.amountHandling === 'split') {
+    const numericAmount = parseFloat(amount.toString().replace(/[^\d.-]/g, ''));
+    if (!isNaN(numericAmount)) {
+      if (type === '利用' && numericAmount < 0) {
+        withdrawAmount = Math.abs(numericAmount).toLocaleString();
+      } else if (type === '獲得' && numericAmount > 0) {
+        depositAmount = numericAmount.toLocaleString();
+      }
+    }
+  }
+  
+  // PPformat行データ構築（13列）
+  return [
+    formattedDate,           // 取引日
+    withdrawAmount,          // 出金金額（円）
+    depositAmount,           // 入金金額（円）
+    '-',                     // 海外出金金額
+    '-',                     // 通貨
+    '-',                     // 変換レート（円）
+    '-',                     // 利用国
+    '-',                     // 取引内容
+    partner || content,      // 取引先
+    '-',                     // 取引方法
+    '-',                     // 支払い区分
+    '-',                     // 利用者
+    id                       // 取引番号
+  ];
+}
+
+/**
+ * PPformat用フィルタリング
+ * 
+ * @param {Array} row - データ行
+ * @param {Array<string>} headers - ヘッダー行
+ * @param {Object} filters - フィルター設定
+ * @return {boolean} フィルター通過可否
+ */
+function passesPPformatFilters(row, headers, filters) {
+  const typeIndex = headers.indexOf('種別');
+  const amountIndex = headers.indexOf('ポイント数');
+  
+  const type = row[typeIndex] || '';
+  const amount = parseFloat((row[amountIndex] || '').toString().replace(/[^\d.-]/g, ''));
+  
+  // 種別フィルター
+  if (filters.includeTypes && filters.includeTypes.length > 0) {
+    if (!filters.includeTypes.includes(type)) {
+      return false;
+    }
+  }
+  
+  if (filters.excludeTypes && filters.excludeTypes.length > 0) {
+    if (filters.excludeTypes.includes(type)) {
+      return false;
+    }
+  }
+  
+  // 金額フィルター
+  if (filters.minAmount !== null && !isNaN(amount) && amount < filters.minAmount) {
+    return false;
+  }
+  
+  if (filters.maxAmount !== null && !isNaN(amount) && amount > filters.maxAmount) {
+    return false;
+  }
+  
+  return true;
+}
+
+/**
+ * PPformat用日付フォーマット
+ * 
+ * @param {string} dateStr - 日付文字列
+ * @param {string} format - フォーマット
+ * @return {string} フォーマット済み日付
+ */
+function formatDateForPPformat(dateStr, format) {
+  if (!dateStr) return '';
+  
+  try {
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return dateStr;
+    
+    // YYYY/MM/DD HH:mm:ss 形式
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    
+    return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
+  } catch (error) {
+    Logger.log(`[dataTransformer.gs] 日付変換エラー: ${dateStr}, ${error.message}`);
+    return dateStr;
+  }
+}
+
+/**
+ * MFformatシートへの転記（マネーフォワード仕訳形式）
  * 
  * @param {Array<Array>} sourceData - ソースデータ
  * @param {Object} config - MFformat設定
@@ -159,11 +375,11 @@ function transferToMFformat(sourceData, config) {
   const targetSheet = getSheetSafely(SHEET_NAMES.MFFORMAT);
   
   // ヘッダー行の設定
-  const headers = extractHeaders(sourceData);
-  const targetHeaders = buildTargetHeaders(headers, config.columnMapping);
+  const sourceHeaders = extractHeaders(sourceData);
+  const targetHeaders = TRANSFER_CONFIG.MFFORMAT_COLUMNS;
   
   // データの変換
-  const transformedData = transformData(sourceData, config, headers);
+  const transformedData = transformToMFformatData(sourceData, config, sourceHeaders);
   
   // シートに書き込み
   writeDataToSheet(targetSheet, [targetHeaders, ...transformedData]);
@@ -172,6 +388,194 @@ function transferToMFformat(sourceData, config) {
     processedRows: transformedData.length,
     targetColumns: targetHeaders.length
   };
+}
+
+/**
+ * MFformat用データ変換
+ * 
+ * @param {Array<Array>} sourceData - ソースデータ
+ * @param {Object} config - 設定
+ * @param {Array<string>} sourceHeaders - ソースヘッダー
+ * @return {Array<Array>} 変換済みデータ
+ */
+function transformToMFformatData(sourceData, config, sourceHeaders) {
+  const transformedData = [];
+  let transactionNo = 1;
+  
+  // ヘッダー行をスキップ（1行目）
+  for (let i = 1; i < sourceData.length; i++) {
+    const sourceRow = sourceData[i];
+    
+    // フィルタリング処理
+    if (!passesMFformatFilters(sourceRow, sourceHeaders, config.filters)) {
+      continue;
+    }
+    
+    // マネーフォワード仕訳形式に変換
+    const targetRow = buildMFformatRow(sourceRow, sourceHeaders, config.transformations, transactionNo);
+    
+    transformedData.push(targetRow);
+    transactionNo++;
+  }
+  
+  return transformedData;
+}
+
+/**
+ * MFformat行の構築
+ * 
+ * @param {Array} sourceRow - ソース行データ
+ * @param {Array<string>} sourceHeaders - ソースヘッダー
+ * @param {Object} transformations - 変換設定
+ * @param {number} transactionNo - 取引番号
+ * @return {Array} MFformat行データ
+ */
+function buildMFformatRow(sourceRow, sourceHeaders, transformations, transactionNo) {
+  // ソースデータのインデックス取得
+  const idIndex = sourceHeaders.indexOf('ID');
+  const dateIndex = sourceHeaders.indexOf('日付');
+  const typeIndex = sourceHeaders.indexOf('種別');
+  const contentIndex = sourceHeaders.indexOf('内容');
+  const amountIndex = sourceHeaders.indexOf('ポイント数');
+  const messageIndex = sourceHeaders.indexOf('メッセージ');
+  const partnerIndex = sourceHeaders.indexOf('相手');
+  
+  // ソースデータ取得
+  const id = sourceRow[idIndex] || '';
+  const date = sourceRow[dateIndex] || '';
+  const type = sourceRow[typeIndex] || '';
+  const content = sourceRow[contentIndex] || '';
+  const amount = sourceRow[amountIndex] || '';
+  const message = sourceRow[messageIndex] || '';
+  const partner = sourceRow[partnerIndex] || '';
+  
+  // 日付フォーマット変換
+  const formattedDate = formatDateForMFformat(date, transformations.dateFormat);
+  
+  // 金額処理
+  const numericAmount = Math.abs(parseFloat(amount.toString().replace(/[^\d.-]/g, '')) || 0);
+  
+  // 勘定科目の決定
+  let debitAccount = transformations.defaultAccount.debit;
+  let creditAccount = transformations.defaultAccount.credit;
+  
+  if (type === '利用') {
+    // 利用時：ポイント使用 → 借方：費用、貸方：ポイント
+    debitAccount = 'ポイント利用';
+    creditAccount = 'ポイント';
+  } else if (type === '獲得') {
+    // 獲得時：ポイント取得 → 借方：ポイント、貸方：収益
+    debitAccount = 'ポイント';
+    creditAccount = 'ポイント収益';
+  }
+  
+  // 現在時刻
+  const now = new Date();
+  const createdAt = formatDateForMFformat(now.toISOString(), 'YYYY/MM/DD HH:mm:ss');
+  
+  // MFformat行データ構築（27列）
+  return [
+    transactionNo,                    // 取引No
+    formattedDate,                    // 取引日
+    debitAccount,                     // 借方勘定科目
+    '',                               // 借方補助科目
+    '',                               // 借方部門
+    partner || '',                    // 借方取引先
+    transformations.taxType,          // 借方税区分
+    '',                               // 借方インボイス
+    numericAmount,                    // 借方金額(円)
+    0,                                // 借方税額
+    creditAccount,                    // 貸方勘定科目
+    '',                               // 貸方補助科目
+    '',                               // 貸方部門
+    partner || '',                    // 貸方取引先
+    transformations.taxType,          // 貸方税区分
+    '',                               // 貸方インボイス
+    numericAmount,                    // 貸方金額(円)
+    0,                                // 貸方税額
+    content || message || '',         // 摘要
+    `${type}:${id}`,                  // 仕訳メモ
+    '',                               // タグ
+    '',                               // MF仕訳タイプ
+    '',                               // 決算整理仕訳
+    createdAt,                        // 作成日時
+    'GAS転記',                        // 作成者
+    createdAt,                        // 最終更新日時
+    'GAS転記'                         // 最終更新者
+  ];
+}
+
+/**
+ * MFformat用フィルタリング
+ * 
+ * @param {Array} row - データ行
+ * @param {Array<string>} headers - ヘッダー行
+ * @param {Object} filters - フィルター設定
+ * @return {boolean} フィルター通過可否
+ */
+function passesMFformatFilters(row, headers, filters) {
+  const typeIndex = headers.indexOf('種別');
+  const amountIndex = headers.indexOf('ポイント数');
+  
+  const type = row[typeIndex] || '';
+  const amount = parseFloat((row[amountIndex] || '').toString().replace(/[^\d.-]/g, ''));
+  
+  // 種別フィルター
+  if (filters.includeTypes && filters.includeTypes.length > 0) {
+    if (!filters.includeTypes.includes(type)) {
+      return false;
+    }
+  }
+  
+  if (filters.excludeTypes && filters.excludeTypes.length > 0) {
+    if (filters.excludeTypes.includes(type)) {
+      return false;
+    }
+  }
+  
+  // 金額フィルター
+  if (filters.minAmount !== null && !isNaN(amount) && Math.abs(amount) < filters.minAmount) {
+    return false;
+  }
+  
+  if (filters.maxAmount !== null && !isNaN(amount) && Math.abs(amount) > filters.maxAmount) {
+    return false;
+  }
+  
+  return true;
+}
+
+/**
+ * MFformat用日付フォーマット
+ * 
+ * @param {string} dateStr - 日付文字列
+ * @param {string} format - フォーマット
+ * @return {string} フォーマット済み日付
+ */
+function formatDateForMFformat(dateStr, format) {
+  if (!dateStr) return '';
+  
+  try {
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return dateStr;
+    
+    // YYYY/MM/DD 形式
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    
+    if (format && format.includes('HH:mm:ss')) {
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const seconds = String(date.getSeconds()).padStart(2, '0');
+      return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
+    }
+    
+    return `${year}/${month}/${day}`;
+  } catch (error) {
+    Logger.log(`[dataTransformer.gs] 日付変換エラー: ${dateStr}, ${error.message}`);
+    return dateStr;
+  }
 }
 
 /**
@@ -191,114 +595,7 @@ function getSheetData(sheet) {
   return sheet.getRange(1, 1, lastRow, lastCol).getValues();
 }
 
-/**
- * ターゲットヘッダーの構築
- * 
- * @param {Array<string>} sourceHeaders - ソースヘッダー
- * @param {Object} columnMapping - 列マッピング
- * @return {Array<string>} ターゲットヘッダー
- */
-function buildTargetHeaders(sourceHeaders, columnMapping) {
-  const targetHeaders = [];
-  
-  // マッピング設定に基づいてヘッダーを構築
-  for (const [sourceCol, targetPos] of Object.entries(columnMapping)) {
-    if (sourceHeaders.includes(sourceCol)) {
-      targetHeaders.push(sourceCol);
-    }
-  }
-  
-  return targetHeaders;
-}
 
-/**
- * データ変換処理
- * 
- * @param {Array<Array>} sourceData - ソースデータ
- * @param {Object} config - 変換設定
- * @param {Array<string>} headers - ヘッダー行
- * @return {Array<Array>} 変換済みデータ
- */
-function transformData(sourceData, config, headers) {
-  const transformedData = [];
-  
-  // ヘッダー行をスキップ（1行目）
-  for (let i = 1; i < sourceData.length; i++) {
-    const sourceRow = sourceData[i];
-    
-    // フィルタリング処理
-    if (!passesFilters(sourceRow, headers, config.filters)) {
-      continue;
-    }
-    
-    // 列マッピングに基づいてデータを変換
-    const targetRow = buildTargetRow(sourceRow, headers, config.columnMapping);
-    
-    // データ変換処理を適用
-    const transformedRow = applyTransformations(targetRow, config.transformations);
-    
-    transformedData.push(transformedRow);
-  }
-  
-  return transformedData;
-}
-
-/**
- * ターゲット行の構築
- * 
- * @param {Array} sourceRow - ソース行データ
- * @param {Array<string>} headers - ヘッダー行
- * @param {Object} columnMapping - 列マッピング
- * @return {Array} ターゲット行データ
- */
-function buildTargetRow(sourceRow, headers, columnMapping) {
-  const targetRow = [];
-  
-  for (const [sourceCol, targetPos] of Object.entries(columnMapping)) {
-    const sourceIndex = headers.indexOf(sourceCol);
-    const value = sourceIndex >= 0 ? sourceRow[sourceIndex] : '';
-    targetRow.push(value);
-  }
-  
-  return targetRow;
-}
-
-/**
- * フィルタリング処理
- * 
- * @param {Array} row - データ行
- * @param {Array<string>} headers - ヘッダー行
- * @param {Array} filters - フィルター設定
- * @return {boolean} フィルター通過可否
- */
-function passesFilters(row, headers, filters) {
-  if (!filters || filters.length === 0) {
-    return true;
-  }
-  
-  // 今後の拡張用：フィルター条件の実装
-  // 例: 種別が「獲得」のみ、ポイント数が正の値のみ等
-  
-  return true;
-}
-
-/**
- * データ変換処理の適用
- * 
- * @param {Array} row - データ行
- * @param {Array} transformations - 変換設定
- * @return {Array} 変換済み行データ
- */
-function applyTransformations(row, transformations) {
-  if (!transformations || transformations.length === 0) {
-    return row;
-  }
-  
-  // 今後の拡張用：データ変換ルールの実装
-  // 例: 日付フォーマット変更、数値計算、文字列置換等
-  
-  return row;
-}
 
 /**
  * シートにデータを書き込み
