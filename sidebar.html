@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSV処理ツール</title>
+  <style>
+    /* ミニマルデザインCSS */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #333;
+      background-color: #fff;
+      padding: 16px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .header h1 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1a73e8;
+      margin-bottom: 4px;
+    }
+
+    .header .version {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .section {
+      margin-bottom: 24px;
+      padding: 16px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      background-color: #fafafa;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #333;
+      display: flex;
+      align-items: center;
+    }
+
+    .section-title .icon {
+      margin-right: 8px;
+      font-size: 18px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: #555;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #1a73e8;
+      box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.1);
+    }
+
+    .file-input-wrapper {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .file-input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 2px dashed #ccc;
+      border-radius: 4px;
+      background-color: #fff;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+
+    .file-input:hover {
+      border-color: #1a73e8;
+      background-color: #f8f9ff;
+    }
+
+    .file-input.dragover {
+      border-color: #1a73e8;
+      background-color: #e8f0fe;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 500;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      min-width: 80px;
+    }
+
+    .btn-primary {
+      background-color: #1a73e8;
+      color: white;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background-color: #1557b0;
+    }
+
+    .btn-secondary {
+      background-color: #f8f9fa;
+      color: #333;
+      border: 1px solid #dadce0;
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background-color: #e8eaed;
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-full {
+      width: 100%;
+    }
+
+    .progress-container {
+      margin: 16px 0;
+      display: none;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background-color: #e0e0e0;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background-color: #1a73e8;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
+      text-align: center;
+    }
+
+    .status-message {
+      padding: 12px;
+      border-radius: 4px;
+      margin: 12px 0;
+      font-size: 14px;
+      display: none;
+    }
+
+    .status-success {
+      background-color: #e8f5e8;
+      color: #2e7d32;
+      border: 1px solid #c8e6c9;
+    }
+
+    .status-error {
+      background-color: #ffebee;
+      color: #c62828;
+      border: 1px solid #ffcdd2;
+    }
+
+    .status-warning {
+      background-color: #fff3e0;
+      color: #ef6c00;
+      border: 1px solid #ffcc02;
+    }
+
+    .status-info {
+      background-color: #e3f2fd;
+      color: #1565c0;
+      border: 1px solid #bbdefb;
+    }
+
+    .sheet-status {
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    .sheet-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .sheet-item:last-child {
+      border-bottom: none;
+    }
+
+    .sheet-name {
+      font-weight: 500;
+    }
+
+    .sheet-info {
+      font-size: 11px;
+      color: #666;
+    }
+
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
+    }
+
+    .status-ok {
+      background-color: #4caf50;
+    }
+
+    .status-empty {
+      background-color: #ff9800;
+    }
+
+    .status-missing {
+      background-color: #f44336;
+    }
+
+    .log-viewer {
+      max-height: 200px;
+      overflow-y: auto;
+      background-color: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 4px;
+      padding: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .log-entry {
+      margin-bottom: 4px;
+      padding: 2px 0;
+    }
+
+    .log-debug { color: #666; }
+    .log-info { color: #333; }
+    .log-warn { color: #ff9800; }
+    .log-error { color: #f44336; font-weight: bold; }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .mt-2 { margin-top: 8px; }
+    .mb-2 { margin-bottom: 8px; }
+    .mt-3 { margin-top: 12px; }
+    .mb-3 { margin-bottom: 12px; }
+
+    /* レスポンシブ対応 */
+    @media (max-width: 320px) {
+      body {
+        padding: 12px;
+      }
+      
+      .section {
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- ヘッダー -->
+  <div class="header">
+    <h1>CSV処理ツール</h1>
+    <div class="version">v1.0.0</div>
+  </div>
+
+  <!-- CSVインポートセクション -->
+  <div class="section">
+    <div class="section-title">
+      <span class="icon">📁</span>
+      CSVインポート
+    </div>
+    
+    <div class="form-group">
+      <label class="form-label">CSVファイルを選択</label>
+      <div class="file-input-wrapper">
+        <input type="file" id="csvFile" accept=".csv,.txt" style="display: none;">
+        <div class="file-input" id="fileDropZone">
+          ファイルを選択またはドラッグ&ドロップ
+        </div>
+      </div>
+      <div id="fileInfo" class="mt-2" style="font-size: 12px; color: #666;"></div>
+    </div>
+
+    <div class="form-group">
+      <button id="importBtn" class="btn btn-primary btn-full" disabled>
+        インポート実行
+      </button>
+    </div>
+
+    <!-- プログレスバー -->
+    <div id="progressContainer" class="progress-container">
+      <div class="progress-bar">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
+      <div id="progressText" class="progress-text">処理中...</div>
+    </div>
+  </div>
+
+  <!-- ステータス表示 -->
+  <div id="statusMessage" class="status-message"></div>
+
+  <!-- シート状況セクション -->
+  <div class="section">
+    <div class="section-title">
+      <span class="icon">📊</span>
+      シート状況
+    </div>
+    
+    <div id="sheetStatus" class="sheet-status">
+      <div class="text-center" style="color: #666;">読み込み中...</div>
+    </div>
+
+    <div class="form-group mt-3">
+      <button id="refreshBtn" class="btn btn-secondary btn-full">
+        状況を更新
+      </button>
+    </div>
+  </div>
+
+  <!-- ログ表示セクション -->
+  <div class="section">
+    <div class="section-title">
+      <span class="icon">📝</span>
+      処理ログ
+    </div>
+    
+    <div id="logViewer" class="log-viewer">
+      <div class="text-center" style="color: #666;">ログを読み込み中...</div>
+    </div>
+
+    <div class="form-group mt-2">
+      <button id="clearLogBtn" class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px;">
+        ログクリア
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // グローバル変数
+    let selectedFile = null;
+
+    // DOM要素の取得
+    const csvFileInput = document.getElementById('csvFile');
+    const fileDropZone = document.getElementById('fileDropZone');
+    const fileInfo = document.getElementById('fileInfo');
+    const importBtn = document.getElementById('importBtn');
+    const progressContainer = document.getElementById('progressContainer');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+    const statusMessage = document.getElementById('statusMessage');
+    const sheetStatus = document.getElementById('sheetStatus');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const logViewer = document.getElementById('logViewer');
+    const clearLogBtn = document.getElementById('clearLogBtn');
+
+    // 初期化
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeEventListeners();
+      loadSheetStatus();
+      loadRecentLogs();
+    });
+
+    // イベントリスナーの初期化
+    function initializeEventListeners() {
+      // ファイル選択
+      fileDropZone.addEventListener('click', () => csvFileInput.click());
+      csvFileInput.addEventListener('change', handleFileSelect);
+
+      // ドラッグ&ドロップ
+      fileDropZone.addEventListener('dragover', handleDragOver);
+      fileDropZone.addEventListener('dragleave', handleDragLeave);
+      fileDropZone.addEventListener('drop', handleFileDrop);
+
+      // ボタンクリック
+      importBtn.addEventListener('click', handleImport);
+      refreshBtn.addEventListener('click', loadSheetStatus);
+      clearLogBtn.addEventListener('click', clearLogs);
+    }
+
+    // ファイル選択処理
+    function handleFileSelect(event) {
+      const file = event.target.files[0];
+      if (file) {
+        processSelectedFile(file);
+      }
+    }
+
+    // ドラッグオーバー処理
+    function handleDragOver(event) {
+      event.preventDefault();
+      fileDropZone.classList.add('dragover');
+    }
+
+    // ドラッグリーブ処理
+    function handleDragLeave(event) {
+      event.preventDefault();
+      fileDropZone.classList.remove('dragover');
+    }
+
+    // ファイルドロップ処理
+    function handleFileDrop(event) {
+      event.preventDefault();
+      fileDropZone.classList.remove('dragover');
+      
+      const files = event.dataTransfer.files;
+      if (files.length > 0) {
+        processSelectedFile(files[0]);
+      }
+    }
+
+    // 選択されたファイルの処理
+    function processSelectedFile(file) {
+      selectedFile = file;
+      
+      // ファイル情報の表示
+      const fileSize = formatFileSize(file.size);
+      fileInfo.innerHTML = `
+        <strong>${escapeHtml(file.name)}</strong><br>
+        サイズ: ${fileSize} | 最終更新: ${new Date(file.lastModified).toLocaleString()}
+      `;
+      
+      // ファイル選択表示の更新
+      fileDropZone.innerHTML = `
+        <strong>✓ ${escapeHtml(file.name)}</strong><br>
+        <small>別のファイルを選択する場合はクリック</small>
+      `;
+      
+      // インポートボタンを有効化
+      importBtn.disabled = false;
+      
+      // 検証
+      if (file.size > 10 * 1024 * 1024) { // 10MB
+        showStatus('warning', 'ファイルサイズが大きいです。処理に時間がかかる場合があります。');
+      }
+    }
+
+    // CSVインポート処理
+    function handleImport() {
+      if (!selectedFile) {
+        showStatus('error', 'ファイルが選択されていません。');
+        return;
+      }
+
+      // UI状態の更新
+      importBtn.disabled = true;
+      showProgress(true);
+      updateProgress(0, 'ファイルを読み込み中...');
+
+      // ファイル読み込み
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const csvContent = e.target.result;
+        
+        updateProgress(30, 'CSVデータを解析中...');
+        
+        // GAS関数を呼び出し
+        google.script.run
+          .withSuccessHandler(handleImportSuccess)
+          .withFailureHandler(handleImportError)
+          .processCSVImport(csvContent, selectedFile.name, {
+            hasHeader: true,
+            encoding: 'UTF-8'
+          });
+      };
+
+      reader.onerror = function() {
+        handleImportError('ファイルの読み込みに失敗しました。');
+      };
+
+      reader.readAsText(selectedFile, 'UTF-8');
+    }
+
+    // インポート成功処理
+    function handleImportSuccess(result) {
+      updateProgress(100, '完了');
+      
+      setTimeout(() => {
+        showProgress(false);
+        importBtn.disabled = false;
+        
+        if (result.success) {
+          const data = result.data;
+          showStatus('success', 
+            `インポート完了: ${data.totalRows}行, ${data.totalColumns}列 (${data.processingTime}ms)`
+          );
+          
+          // シート状況を更新
+          loadSheetStatus();
+          loadRecentLogs();
+        } else {
+          showStatus('error', result.message || 'インポートに失敗しました。');
+        }
+      }, 500);
+    }
+
+    // インポートエラー処理
+    function handleImportError(error) {
+      showProgress(false);
+      importBtn.disabled = false;
+      
+      const errorMessage = typeof error === 'string' ? error : error.message || 'インポートエラーが発生しました。';
+      showStatus('error', errorMessage);
+      
+      loadRecentLogs(); // エラーログを表示
+    }
+
+    // プログレス表示制御
+    function showProgress(show) {
+      progressContainer.style.display = show ? 'block' : 'none';
+      if (!show) {
+        updateProgress(0, '');
+      }
+    }
+
+    // プログレス更新
+    function updateProgress(percent, text) {
+      progressFill.style.width = percent + '%';
+      progressText.textContent = text;
+    }
+
+    // ステータスメッセージ表示
+    function showStatus(type, message) {
+      statusMessage.className = `status-message status-${type}`;
+      statusMessage.textContent = message;
+      statusMessage.style.display = 'block';
+      
+      // 成功メッセージは3秒後に自動で隠す
+      if (type === 'success') {
+        setTimeout(() => {
+          statusMessage.style.display = 'none';
+        }, 3000);
+      }
+    }
+
+    // シート状況読み込み
+    function loadSheetStatus() {
+      refreshBtn.disabled = true;
+      sheetStatus.innerHTML = '<div class="text-center" style="color: #666;">読み込み中...</div>';
+      
+      google.script.run
+        .withSuccessHandler(function(result) {
+          refreshBtn.disabled = false;
+          
+          if (result.success) {
+            displaySheetStatus(result.data);
+          } else {
+            sheetStatus.innerHTML = '<div style="color: #f44336;">エラー: ' + escapeHtml(result.error) + '</div>';
+          }
+        })
+        .withFailureHandler(function(error) {
+          refreshBtn.disabled = false;
+          sheetStatus.innerHTML = '<div style="color: #f44336;">読み込みエラー</div>';
+        })
+        .getSheetStatus();
+    }
+
+    // シート状況表示
+    function displaySheetStatus(data) {
+      let html = '';
+      
+      const sheets = ['LPcsv', 'PPformat', 'MFformat', 'ログ'];
+      sheets.forEach(sheetName => {
+        const info = data[sheetName];
+        let statusClass, statusText;
+        
+        if (!info.exists) {
+          statusClass = 'status-missing';
+          statusText = '未作成';
+        } else if (!info.hasData) {
+          statusClass = 'status-empty';
+          statusText = '空';
+        } else {
+          statusClass = 'status-ok';
+          statusText = `${info.rows}行 × ${info.columns}列`;
+        }
+        
+        html += `
+          <div class="sheet-item">
+            <div class="sheet-name">
+              <span class="status-indicator ${statusClass}"></span>
+              ${sheetName}
+            </div>
+            <div class="sheet-info">${statusText}</div>
+          </div>
+        `;
+      });
+      
+      sheetStatus.innerHTML = html;
+    }
+
+    // ログ読み込み
+    function loadRecentLogs() {
+      google.script.run
+        .withSuccessHandler(displayLogs)
+        .withFailureHandler(function(error) {
+          logViewer.innerHTML = '<div style="color: #f44336;">ログ読み込みエラー</div>';
+        })
+        .getRecentLogs(20);
+    }
+
+    // ログ表示
+    function displayLogs(logs) {
+      if (!logs || logs.length === 0) {
+        logViewer.innerHTML = '<div class="text-center" style="color: #666;">ログはありません</div>';
+        return;
+      }
+      
+      let html = '';
+      logs.forEach(log => {
+        const timestamp = new Date(log.timestamp).toLocaleTimeString();
+        const levelClass = `log-${log.level.toLowerCase()}`;
+        
+        html += `
+          <div class="log-entry ${levelClass}">
+            [${timestamp}] [${log.level}] ${escapeHtml(log.message)}
+          </div>
+        `;
+      });
+      
+      logViewer.innerHTML = html;
+      logViewer.scrollTop = logViewer.scrollHeight;
+    }
+
+    // ログクリア
+    function clearLogs() {
+      if (confirm('ログをクリアしますか？')) {
+        google.script.run
+          .withSuccessHandler(function() {
+            logViewer.innerHTML = '<div class="text-center" style="color: #666;">ログはありません</div>';
+            showStatus('info', 'ログをクリアしました。');
+          })
+          .withFailureHandler(function(error) {
+            showStatus('error', 'ログクリアに失敗しました。');
+          })
+          .clearOldLogs(0); // 全ログを削除
+      }
+    }
+
+    // ユーティリティ関数
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 B';
+      const k = 1024;
+      const sizes = ['B', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>
