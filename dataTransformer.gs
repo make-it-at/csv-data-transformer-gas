@@ -400,6 +400,9 @@ function formatDateForPPformat(dateStr, format) {
 function transferToMFformat(sourceData, config) {
   const targetSheet = getSheetSafely(SHEET_NAMES.MFFORMAT);
   
+  // 設定のデバッグログ
+  Logger.log(`[dataTransformer.gs] MFformat転記設定: ${JSON.stringify(config)}`);
+  
   // ヘッダー行の設定
   const headerInfo = extractHeaders(sourceData);
   const sourceHeaders = headerInfo.headers;
@@ -485,6 +488,9 @@ function transformToMFformatData(sourceData, config, sourceHeaders) {
  * @return {Array} MFformat行データ
  */
 function buildMFformatRow(sourceRow, sourceHeaders, transformations, transactionNo) {
+  // 設定のデバッグログ
+  Logger.log(`[dataTransformer.gs] buildMFformatRow設定: ${JSON.stringify(transformations)}`);
+  
   // ソースデータのインデックス取得
   const idIndex = sourceHeaders.indexOf('ID');
   const dateIndex = sourceHeaders.indexOf('日付');
@@ -514,14 +520,23 @@ function buildMFformatRow(sourceRow, sourceHeaders, transformations, transaction
   let creditAccount = '';
   let taxCategory = '対象外';
   
+  Logger.log(`[dataTransformer.gs] 種別: ${type}, 設定: ${JSON.stringify(transformations.accounts)}`);
+  
   if (transformations.accounts && transformations.accounts[type]) {
     debitAccount = transformations.accounts[type].debit || '';
     creditAccount = transformations.accounts[type].credit || '';
+    Logger.log(`[dataTransformer.gs] 勘定科目決定: 借方=${debitAccount}, 貸方=${creditAccount}`);
+  } else {
+    Logger.log(`[dataTransformer.gs] 勘定科目設定が見つかりません: 種別=${type}`);
   }
   
   // 税区分の決定（ユーザー設定に基づく）
+  Logger.log(`[dataTransformer.gs] 税区分設定: ${JSON.stringify(transformations.taxCategories)}`);
   if (transformations.taxCategories && transformations.taxCategories[type]) {
     taxCategory = transformations.taxCategories[type];
+    Logger.log(`[dataTransformer.gs] 税区分決定: ${taxCategory}`);
+  } else {
+    Logger.log(`[dataTransformer.gs] 税区分設定が見つかりません: 種別=${type}`);
   }
   
   // 現在時刻
