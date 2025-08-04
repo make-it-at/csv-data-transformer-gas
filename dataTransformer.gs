@@ -357,15 +357,33 @@ function formatDateForPPformat(dateStr, format) {
   if (!dateStr) return '';
   
   try {
-    const date = new Date(dateStr);
-    if (isNaN(date.getTime())) return dateStr;
+    Logger.log(`[dataTransformer.gs] PPformat日付変換入力: ${dateStr}`);
+    
+    // タイムゾーン情報を含む日付文字列を適切に処理
+    let date;
+    if (dateStr.includes('PDT') || dateStr.includes('PST')) {
+      // 太平洋時間の場合、UTCとして解釈してから日本時間に変換
+      const utcStr = dateStr.replace(/PDT|PST/, 'UTC');
+      date = new Date(utcStr);
+      // 日本時間（JST）に変換（UTC+9）
+      date.setHours(date.getHours() + 9);
+    } else {
+      date = new Date(dateStr);
+    }
+    
+    if (isNaN(date.getTime())) {
+      Logger.log(`[dataTransformer.gs] 無効な日付: ${dateStr}`);
+      return dateStr;
+    }
     
     // YYYY/MM/DD 00:00:00 形式（時刻は常に00:00:00）
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     
-    return `${year}/${month}/${day} 00:00:00`;
+    const result = `${year}/${month}/${day} 00:00:00`;
+    Logger.log(`[dataTransformer.gs] PPformat日付変換結果: ${result}`);
+    return result;
   } catch (error) {
     Logger.log(`[dataTransformer.gs] 日付変換エラー: ${dateStr}, ${error.message}`);
     return dateStr;
@@ -593,8 +611,24 @@ function formatDateForMFformat(dateStr, format) {
   if (!dateStr) return '';
   
   try {
-    const date = new Date(dateStr);
-    if (isNaN(date.getTime())) return dateStr;
+    Logger.log(`[dataTransformer.gs] MFformat日付変換入力: ${dateStr}`);
+    
+    // タイムゾーン情報を含む日付文字列を適切に処理
+    let date;
+    if (dateStr.includes('PDT') || dateStr.includes('PST')) {
+      // 太平洋時間の場合、UTCとして解釈してから日本時間に変換
+      const utcStr = dateStr.replace(/PDT|PST/, 'UTC');
+      date = new Date(utcStr);
+      // 日本時間（JST）に変換（UTC+9）
+      date.setHours(date.getHours() + 9);
+    } else {
+      date = new Date(dateStr);
+    }
+    
+    if (isNaN(date.getTime())) {
+      Logger.log(`[dataTransformer.gs] 無効な日付: ${dateStr}`);
+      return dateStr;
+    }
     
     // YYYY/MM/DD 形式
     const year = date.getFullYear();
@@ -605,10 +639,14 @@ function formatDateForMFformat(dateStr, format) {
       const hours = String(date.getHours()).padStart(2, '0');
       const minutes = String(date.getMinutes()).padStart(2, '0');
       const seconds = String(date.getSeconds()).padStart(2, '0');
-      return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
+      const result = `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
+      Logger.log(`[dataTransformer.gs] MFformat日付変換結果（時刻付き）: ${result}`);
+      return result;
     }
     
-    return `${year}/${month}/${day}`;
+    const result = `${year}/${month}/${day}`;
+    Logger.log(`[dataTransformer.gs] MFformat日付変換結果: ${result}`);
+    return result;
   } catch (error) {
     Logger.log(`[dataTransformer.gs] 日付変換エラー: ${dateStr}, ${error.message}`);
     return dateStr;
