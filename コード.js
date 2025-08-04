@@ -12,6 +12,7 @@ const SHEET_NAMES = {
   LPCSV: 'LPcsv',
   PPFORMAT: 'PPformat',
   MFFORMAT: 'MFformat',
+  MFSETTINGS: 'MF設定',
   LOG: 'ログ'
 };
 
@@ -71,6 +72,10 @@ function initializeSheets() {
         if (sheetName === SHEET_NAMES.LOG) {
           initializeLogSheet(newSheet);
         }
+        // MF設定シートの場合は初期設定を設定
+        if (sheetName === SHEET_NAMES.MFSETTINGS) {
+          initializeMFSettingsSheet(newSheet);
+        }
       }
     });
     
@@ -80,6 +85,40 @@ function initializeSheets() {
     Logger.log(`[main.gs] シート初期化エラー: ${error.message}`);
     throw error;
   }
+}
+
+/**
+ * MF設定シートの初期化
+ * @param {Sheet} settingsSheet - MF設定シート
+ */
+function initializeMFSettingsSheet(settingsSheet) {
+  // 設定項目の定義
+  const settings = [
+    ['設定項目', '種別', '設定値', '説明'],
+    ['獲得_借方勘定科目', '獲得', '事業主貸', '獲得時の借方勘定科目'],
+    ['獲得_貸方勘定科目', '獲得', '売掛金', '獲得時の貸方勘定科目'],
+    ['利用_借方勘定科目', '利用', '外注費', '利用時の借方勘定科目'],
+    ['利用_貸方勘定科目', '利用', '事業主借', '利用時の貸方勘定科目'],
+    ['獲得_税区分', '獲得', '対象外', '獲得時の税区分'],
+    ['利用_税区分', '利用', '対象外', '利用時の税区分'],
+    ['仕訳メモを含める', '共通', 'true', '仕訳メモを含めるかどうか（true/false）']
+  ];
+  
+  // データを書き込み
+  settingsSheet.getRange(1, 1, settings.length, 4).setValues(settings);
+  
+  // ヘッダー行のフォーマット
+  const headerRange = settingsSheet.getRange(1, 1, 1, 4);
+  headerRange.setFontWeight('bold');
+  headerRange.setBackground('#e8f4fd');
+  
+  // 列幅の調整
+  settingsSheet.setColumnWidth(1, 200); // 設定項目
+  settingsSheet.setColumnWidth(2, 100); // 種別
+  settingsSheet.setColumnWidth(3, 150); // 設定値
+  settingsSheet.setColumnWidth(4, 300); // 説明
+  
+  Logger.log('[main.gs] MF設定シート初期化完了');
 }
 
 /**
@@ -439,28 +478,82 @@ function createDataUri(csvContent, fileName) {
 }
 
 /**
- * MFformat設定の取得
- * 
+ * MF設定シートから設定を読み込む
+ * @return {Object} 設定オブジェクト
+ */
+function loadMFSettingsFromSheet() {
+  try {
+    const settingsSheet = getSheetSafely(SHEET_NAMES.MFSETTINGS);
+    if (!settingsSheet) {
+      Logger.log('[main.gs] MF設定シートが見つかりません');
+      return TRANSFER_CONFIG.DEFAULT_SETTINGS.mfformat;
+    }
+    
+    const data = settingsSheet.getDataRange().getValues();
+    if (data.length < 2) {
+      Logger.log('[main.gs] MF設定シートにデータがありません');
+      return TRANSFER_CONFIG.DEFAULT_SETTINGS.mfformat;
+    }
+    
+    // 設定値をマップに変換
+    const settingsMap = {};
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      if (row.length >= 3) {
+        const key = row[0]; // 設定項目
+        const value = row[2]; // 設定値
+        settingsMap[key] = value;
+      }
+    }
+    
+    // 設定オブジェクトを構築
+    const settings = {
+      enabled: true,
+      filters: {
+        includeTypes: ['獲得', '利用'],
+        excludeTypes: [],
+        minAmount: null,
+        maxAmount: null
+      },
+      transformations: {
+        dateFormat: 'YYYY/MM/DD',
+        accounts: {
+          獲得: {
+            debit: settingsMap['獲得_借方勘定科目'] || '事業主貸',
+            credit: settingsMap['獲得_貸方勘定科目'] || '売掛金'
+          },
+          利用: {
+            debit: settingsMap['利用_借方勘定科目'] || '外注費',
+            credit: settingsMap['利用_貸方勘定科目'] || '事業主借'
+          }
+        },
+        taxCategories: {
+          獲得: settingsMap['獲得_税区分'] || '対象外',
+          利用: settingsMap['利用_税区分'] || '対象外'
+        },
+        includeMemo: settingsMap['仕訳メモを含める'] === 'true'
+      }
+    };
+    
+    Logger.log(`[main.gs] MF設定読み込み完了: ${JSON.stringify(settings)}`);
+    return settings;
+    
+  } catch (error) {
+    Logger.log(`[main.gs] MF設定読み込みエラー: ${error.message}`);
+    return TRANSFER_CONFIG.DEFAULT_SETTINGS.mfformat;
+  }
+}
+
+/**
+ * MFformat設定の取得（設定シートから読み込み）
  * @return {Object} MFformat設定
  */
 function getMFformatSettings() {
   try {
     Logger.log('[main.gs] MFformat設定取得開始');
     
-    // PropertiesServiceから保存済み設定を取得
-    const properties = PropertiesService.getScriptProperties();
-    const savedSettings = properties.getProperty('MFFORMAT_SETTINGS');
-    
-    let settings;
-    if (savedSettings) {
-      // 保存済み設定がある場合は使用
-      settings = JSON.parse(savedSettings);
-      Logger.log('[main.gs] 保存済み設定を読み込み');
-    } else {
-      // 保存済み設定がない場合はデフォルト設定を使用
-      settings = TRANSFER_CONFIG.DEFAULT_SETTINGS.mfformat;
-      Logger.log('[main.gs] デフォルト設定を使用');
-    }
+    // 設定シートから設定を読み込み
+    const settings = loadMFSettingsFromSheet();
     
     return {
       success: true,
@@ -479,7 +572,90 @@ function getMFformatSettings() {
 }
 
 /**
- * MFformat設定の更新
+ * MF設定シートに設定を書き込む
+ * @param {Object} settings - 設定オブジェクト
+ */
+function saveMFSettingsToSheet(settings) {
+  try {
+    const settingsSheet = getSheetSafely(SHEET_NAMES.MFSETTINGS);
+    if (!settingsSheet) {
+      throw new Error('MF設定シートが見つかりません');
+    }
+    
+    // 設定値を更新
+    const data = settingsSheet.getDataRange().getValues();
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      if (row.length >= 3) {
+        const key = row[0]; // 設定項目
+        let newValue = row[2]; // 現在の設定値
+        
+        // 設定項目に応じて値を更新
+        switch (key) {
+          case '獲得_借方勘定科目':
+            newValue = settings.transformations?.accounts?.獲得?.debit || '事業主貸';
+            break;
+          case '獲得_貸方勘定科目':
+            newValue = settings.transformations?.accounts?.獲得?.credit || '売掛金';
+            break;
+          case '利用_借方勘定科目':
+            newValue = settings.transformations?.accounts?.利用?.debit || '外注費';
+            break;
+          case '利用_貸方勘定科目':
+            newValue = settings.transformations?.accounts?.利用?.credit || '事業主借';
+            break;
+          case '獲得_税区分':
+            newValue = settings.transformations?.taxCategories?.獲得 || '対象外';
+            break;
+          case '利用_税区分':
+            newValue = settings.transformations?.taxCategories?.利用 || '対象外';
+            break;
+          case '仕訳メモを含める':
+            newValue = settings.transformations?.includeMemo ? 'true' : 'false';
+            break;
+        }
+        
+        // 設定値を更新
+        settingsSheet.getRange(i + 1, 3).setValue(newValue);
+      }
+    }
+    
+    Logger.log('[main.gs] MF設定シート更新完了');
+    
+  } catch (error) {
+    Logger.log(`[main.gs] MF設定シート更新エラー: ${error.message}`);
+    throw error;
+  }
+}
+
+/**
+ * MF設定シートを開く
+ */
+function openMFSettingsSheet() {
+  try {
+    Logger.log('[main.gs] MF設定シートを開く');
+    
+    const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+    const settingsSheet = spreadsheet.getSheetByName(SHEET_NAMES.MFSETTINGS);
+    
+    if (settingsSheet) {
+      // 設定シートをアクティブにする
+      spreadsheet.setActiveSheet(settingsSheet);
+      Logger.log('[main.gs] MF設定シートを開きました');
+    } else {
+      // 設定シートが存在しない場合は作成
+      initializeSheets();
+      Logger.log('[main.gs] MF設定シートを作成しました');
+    }
+    
+  } catch (error) {
+    Logger.log(`[main.gs] MF設定シートを開くエラー: ${error.message}`);
+    throw error;
+  }
+}
+
+/**
+ * MFformat設定の更新（設定シートに書き込み）
  * 
  * @param {Object} newSettings - 新しい設定
  * @return {Object} 更新結果
@@ -518,8 +694,8 @@ function updateMFformatSettings(newSettings) {
       }
     }
     
-    // 設定を更新（実際の実装では永続化が必要）
-    TRANSFER_CONFIG.DEFAULT_SETTINGS.mfformat = currentSettings;
+    // 設定シートに書き込み
+    saveMFSettingsToSheet(currentSettings);
     
     // ログ記録
     writeLog('INFO', 'MFformat設定更新完了', JSON.stringify(currentSettings), {

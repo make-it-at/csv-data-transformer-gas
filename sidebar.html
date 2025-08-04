@@ -217,6 +217,27 @@
       border: 1px solid #bbdefb;
     }
 
+    .info-box {
+      background-color: #e3f2fd;
+      border: 1px solid #bbdefb;
+      border-radius: 4px;
+      padding: 12px;
+      margin: 12px 0;
+    }
+
+    .info-box p {
+      margin-bottom: 8px;
+    }
+
+    .info-box ol {
+      margin-left: 20px;
+      margin-bottom: 0;
+    }
+
+    .info-box li {
+      margin-bottom: 4px;
+    }
+
     .sheet-status {
       font-size: 12px;
       margin-top: 8px;
@@ -442,81 +463,31 @@
     </div>
   </div>
 
-  <!-- MFformat設定セクション -->
+  <!-- MFformat設定案内セクション -->
   <div class="section">
     <div class="section-title">
       <span class="icon">⚙️</span>
       MFformat設定
     </div>
     
-    <p class="description">マネーフォワード仕訳形式の出力設定</p>
+    <p class="description">マネーフォワード仕訳形式の出力設定は「MF設定」シートで行います</p>
     
-    <!-- 勘定科目設定 -->
     <div class="form-group">
-      <label class="form-label">勘定科目設定</label>
-      
-      <!-- 獲得時の勘定科目 -->
-      <div class="account-setting">
-        <label class="sub-label">獲得時</label>
-        <div class="account-pair">
-          <input type="text" id="debitAccount_獲得" class="form-input" placeholder="借方勘定科目" value="ポイント">
-          <span class="separator">/</span>
-          <input type="text" id="creditAccount_獲得" class="form-input" placeholder="貸方勘定科目" value="ポイント収益">
-        </div>
-      </div>
-      
-      <!-- 利用時の勘定科目 -->
-      <div class="account-setting">
-        <label class="sub-label">利用時</label>
-        <div class="account-pair">
-          <input type="text" id="debitAccount_利用" class="form-input" placeholder="借方勘定科目" value="ポイント利用">
-          <span class="separator">/</span>
-          <input type="text" id="creditAccount_利用" class="form-input" placeholder="貸方勘定科目" value="ポイント">
-        </div>
+      <div class="info-box">
+        <p><strong>設定方法:</strong></p>
+        <ol>
+          <li>「MF設定」シートを開く</li>
+          <li>「設定値」列の値を編集</li>
+          <li>データ転記実行時に自動反映</li>
+        </ol>
       </div>
     </div>
     
-    <!-- 税区分設定 -->
     <div class="form-group">
-      <label class="form-label">税区分設定</label>
-      
-      <div class="tax-setting">
-        <label class="sub-label">獲得時</label>
-        <select id="taxCategory_獲得" class="form-select">
-          <option value="対象外">対象外</option>
-          <option value="課税売上 10%">課税売上 10%</option>
-          <option value="課税売上 8%">課税売上 8%</option>
-          <option value="非課税売上">非課税売上</option>
-        </select>
-      </div>
-      
-      <div class="tax-setting">
-        <label class="sub-label">利用時</label>
-        <select id="taxCategory_利用" class="form-select">
-          <option value="対象外">対象外</option>
-          <option value="課税仕入 10%">課税仕入 10%</option>
-          <option value="課税仕入 8%">課税仕入 8%</option>
-          <option value="非課税仕入">非課税仕入</option>
-        </select>
-      </div>
-    </div>
-    
-    <!-- 仕訳メモ設定 -->
-    <div class="form-group">
-      <label class="form-label">
-        <input type="checkbox" id="includeMemo" class="form-checkbox">
-        仕訳メモを含める
-      </label>
-      <p class="help-text">チェックすると「獲得:item_xxx」形式のメモが追加されます</p>
-    </div>
-    
-    <div class="form-group">
-      <button id="saveSettingsBtn" class="btn btn-secondary btn-full">
-        💾 設定を保存
+      <button id="openSettingsBtn" class="btn btn-secondary btn-full">
+        📋 MF設定シートを開く
       </button>
     </div>
-    
-    <div id="settingsMessage" class="message" style="display: none;"></div>
   </div>
 
   <!-- データ転記セクション -->
@@ -651,10 +622,10 @@
       }
       
       // 設定保存ボタン
-      const saveSettingsBtn = document.getElementById('saveSettingsBtn');
-      if (saveSettingsBtn) {
-        saveSettingsBtn.addEventListener('click', handleSaveSettings);
-      }
+          const openSettingsBtn = document.getElementById('openSettingsBtn');
+    if (openSettingsBtn) {
+      openSettingsBtn.addEventListener('click', openMFSettingsSheet);
+    }
       
       clearLogBtn.addEventListener('click', clearLogs);
     }
@@ -1137,157 +1108,18 @@
       return div.innerHTML;
     }
 
-    // MFformat設定関連の関数
-    function loadMFformatSettings() {
-      console.log('[Settings] MFformat設定読み込み開始');
+    // MF設定シートを開く関数
+    function openMFSettingsSheet() {
+      console.log('[Settings] MF設定シートを開く');
       
       google.script.run
-        .withSuccessHandler(function(response) {
-          if (response.success) {
-            populateSettingsForm(response.settings);
-            console.log('[Settings] 設定読み込み完了', response.settings);
-          } else {
-            console.error('[Settings] 設定読み込みエラー:', response.error);
-            showSettingsMessage('error', '設定の読み込みに失敗しました: ' + response.error);
-          }
+        .withSuccessHandler(function() {
+          console.log('[Settings] MF設定シートを開きました');
         })
         .withFailureHandler(function(error) {
-          console.error('[Settings] 設定読み込み失敗:', error.message);
-          showSettingsMessage('error', '設定の読み込みに失敗しました: ' + error.message);
+          console.error('[Settings] MF設定シートを開く失敗:', error.message);
         })
-        .getMFformatSettings();
-    }
-
-    function populateSettingsForm(settings) {
-      try {
-        // 勘定科目設定
-        if (settings.transformations && settings.transformations.accounts) {
-          const accounts = settings.transformations.accounts;
-          
-          if (accounts['獲得']) {
-            document.getElementById('debitAccount_獲得').value = accounts['獲得'].debit || '';
-            document.getElementById('creditAccount_獲得').value = accounts['獲得'].credit || '';
-          }
-          
-          if (accounts['利用']) {
-            document.getElementById('debitAccount_利用').value = accounts['利用'].debit || '';
-            document.getElementById('creditAccount_利用').value = accounts['利用'].credit || '';
-          }
-        }
-        
-        // 税区分設定
-        if (settings.transformations && settings.transformations.taxCategories) {
-          const taxCategories = settings.transformations.taxCategories;
-          
-          if (taxCategories['獲得']) {
-            document.getElementById('taxCategory_獲得').value = taxCategories['獲得'];
-          }
-          
-          if (taxCategories['利用']) {
-            document.getElementById('taxCategory_利用').value = taxCategories['利用'];
-          }
-        }
-        
-        // 仕訳メモ設定
-        if (settings.transformations && typeof settings.transformations.includeMemo === 'boolean') {
-          document.getElementById('includeMemo').checked = settings.transformations.includeMemo;
-        }
-        
-        console.log('[Settings] フォーム設定完了');
-      } catch (error) {
-        console.error('[Settings] フォーム設定エラー:', error);
-        showSettingsMessage('error', 'フォームの設定に失敗しました');
-      }
-    }
-
-    function handleSaveSettings() {
-      const saveBtn = document.getElementById('saveSettingsBtn');
-      const originalText = saveBtn.textContent;
-      
-      try {
-        console.log('[Settings] 設定保存開始');
-        
-        // フォームから設定を収集
-        const newSettings = {
-          transformations: {
-            accounts: {
-              '獲得': {
-                debit: document.getElementById('debitAccount_獲得').value.trim(),
-                credit: document.getElementById('creditAccount_獲得').value.trim()
-              },
-              '利用': {
-                debit: document.getElementById('debitAccount_利用').value.trim(),
-                credit: document.getElementById('creditAccount_利用').value.trim()
-              }
-            },
-            taxCategories: {
-              '獲得': document.getElementById('taxCategory_獲得').value,
-              '利用': document.getElementById('taxCategory_利用').value
-            },
-            includeMemo: document.getElementById('includeMemo').checked
-          }
-        };
-        
-        // 入力値検証
-        if (!newSettings.transformations.accounts['獲得'].debit || 
-            !newSettings.transformations.accounts['獲得'].credit ||
-            !newSettings.transformations.accounts['利用'].debit || 
-            !newSettings.transformations.accounts['利用'].credit) {
-          throw new Error('勘定科目は必須入力です');
-        }
-        
-        // ボタン状態変更
-        saveBtn.textContent = '💾 保存中...';
-        saveBtn.disabled = true;
-        
-        // GAS関数呼び出し
-        google.script.run
-          .withSuccessHandler(function(response) {
-            if (response.success) {
-              showSettingsMessage('success', '設定を保存しました');
-              console.log('[Settings] 設定保存完了', response.settings);
-            } else {
-              showSettingsMessage('error', '設定の保存に失敗しました: ' + response.error);
-              console.error('[Settings] 設定保存エラー:', response.error);
-            }
-          })
-          .withFailureHandler(function(error) {
-            showSettingsMessage('error', '設定の保存に失敗しました: ' + error.message);
-            console.error('[Settings] 設定保存失敗:', error.message);
-          })
-          .withFailureHandler(function() {
-            // 完了後の処理
-            saveBtn.textContent = originalText;
-            saveBtn.disabled = false;
-          })
-          .updateMFformatSettings(newSettings);
-        
-        // ボタン復元
-        setTimeout(() => {
-          saveBtn.textContent = originalText;
-          saveBtn.disabled = false;
-        }, 2000);
-        
-      } catch (error) {
-        console.error('[Settings] 設定保存エラー:', error);
-        showSettingsMessage('error', error.message);
-        
-        // ボタン復元
-        saveBtn.textContent = originalText;
-        saveBtn.disabled = false;
-      }
-    }
-
-    function showSettingsMessage(type, message) {
-      const messageDiv = document.getElementById('settingsMessage');
-      messageDiv.className = `message ${type === 'success' ? 'status-success' : 'status-error'}`;
-      messageDiv.textContent = message;
-      messageDiv.style.display = 'block';
-      
-      // 3秒後に非表示
-      setTimeout(() => {
-        messageDiv.style.display = 'none';
-      }, 3000);
+        .openMFSettingsSheet();
     }
   </script>
 </body>
