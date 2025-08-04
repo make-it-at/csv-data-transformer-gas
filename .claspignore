@@ -1,0 +1,40 @@
+# clasp ignore file
+# これらのファイル・ディレクトリはGASにアップロードされません
+
+# ドキュメント
+README.md
+requirements.md
+*.md
+
+# Git関連
+.git/
+.gitignore
+
+# Node.js関連
+node_modules/
+package*.json
+npm-debug.log*
+
+# IDE・エディタ
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS関連
+.DS_Store
+Thumbs.db
+
+# ログファイル
+*.log
+
+# 一時ファイル
+*.tmp
+*.temp
+
+# テストファイル（オプション）
+# tests/
+
+# 設定ファイル
+.env
+.env.*
