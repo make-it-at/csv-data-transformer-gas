@@ -198,7 +198,8 @@ function transferToPPformat(sourceData, config) {
   const targetSheet = getSheetSafely(SHEET_NAMES.PPFORMAT);
   
   // ヘッダー行の設定
-  const sourceHeaders = extractHeaders(sourceData);
+  const headerInfo = extractHeaders(sourceData);
+  const sourceHeaders = headerInfo.headers;
   const targetHeaders = TRANSFER_CONFIG.PPFORMAT_COLUMNS;
   
   // データの変換
@@ -382,7 +383,8 @@ function transferToMFformat(sourceData, config) {
   const targetSheet = getSheetSafely(SHEET_NAMES.MFFORMAT);
   
   // ヘッダー行の設定
-  const sourceHeaders = extractHeaders(sourceData);
+  const headerInfo = extractHeaders(sourceData);
+  const sourceHeaders = headerInfo.headers;
   const targetHeaders = TRANSFER_CONFIG.MFFORMAT_COLUMNS;
   
   // データの変換
