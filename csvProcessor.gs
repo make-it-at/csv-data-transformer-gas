@@ -28,28 +28,16 @@ function parseCSVContent(csvContent, options = {}) {
     
     const opts = { ...defaultOptions, ...options };
     
-    // 行に分割（改行文字の統一）
-    const lines = csvContent.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+    // 改良されたCSV解析を使用（複数行クォート対応）
+    const csvData = parseCSVWithMultilineSupport(csvContent, opts.delimiter);
     
-    // 空行を除去
-    const nonEmptyLines = lines.filter(line => line.trim() !== '');
-    
-    if (nonEmptyLines.length === 0) {
+    if (csvData.length === 0) {
       throw new Error('有効なデータ行がありません');
     }
     
     // 行数制限チェック
-    if (nonEmptyLines.length > opts.maxRows) {
-      throw new Error(`行数が制限を超えています: ${nonEmptyLines.length}行 (最大: ${opts.maxRows}行)`);
-    }
-    
-    // CSV解析
-    const csvData = [];
-    
-    for (let i = 0; i < nonEmptyLines.length; i++) {
-      const line = nonEmptyLines[i];
-      const row = parseCSVLine(line, opts.delimiter);
-      csvData.push(row);
+    if (csvData.length > opts.maxRows) {
+      throw new Error(`行数が制限を超えています: ${csvData.length}行 (最大: ${opts.maxRows}行)`);
     }
     
     Logger.log(`[csvProcessor.gs] CSV解析完了: ${csvData.length}行, ${csvData[0]?.length || 0}列`);
@@ -63,7 +51,7 @@ function parseCSVContent(csvContent, options = {}) {
 }
 
 /**
- * CSV行を解析して配列に変換
+ * CSV行を解析して配列に変換（改行を含むクォート対応）
  * 
  * @param {string} line - CSV行
  * @param {string} delimiter - 区切り文字
@@ -92,13 +80,75 @@ function parseCSVLine(line, delimiter = ',') {
       result.push(current.trim());
       current = '';
     } else {
-      // 通常の文字
+      // 通常の文字（改行も含む）
       current += char;
     }
   }
   
   // 最後のフィールドを追加
   result.push(current.trim());
+  
+  return result;
+}
+
+/**
+ * 改良されたCSV解析（複数行にまたがるクォートフィールド対応）
+ * 
+ * @param {string} csvContent - CSV文字列全体
+ * @param {string} delimiter - 区切り文字
+ * @return {Array<Array<string>>} 解析されたCSVデータ
+ */
+function parseCSVWithMultilineSupport(csvContent, delimiter = ',') {
+  const result = [];
+  let current = '';
+  let inQuotes = false;
+  let currentRow = [];
+  let currentField = '';
+  
+  for (let i = 0; i < csvContent.length; i++) {
+    const char = csvContent[i];
+    const nextChar = csvContent[i + 1];
+    
+    if (char === '"') {
+      if (inQuotes && nextChar === '"') {
+        // エスケープされたクォート
+        currentField += '"';
+        i++; // 次の文字をスキップ
+      } else {
+        // クォートの開始/終了
+        inQuotes = !inQuotes;
+      }
+    } else if (char === delimiter && !inQuotes) {
+      // 区切り文字（クォート外）
+      currentRow.push(currentField.trim());
+      currentField = '';
+    } else if ((char === '\n' || char === '\r') && !inQuotes) {
+      // 行の終了（クォート外）
+      if (currentField || currentRow.length > 0) {
+        currentRow.push(currentField.trim());
+        if (currentRow.some(field => field !== '')) {
+          result.push(currentRow);
+        }
+        currentRow = [];
+        currentField = '';
+      }
+      // \r\n の場合は \n をスキップ
+      if (char === '\r' && nextChar === '\n') {
+        i++;
+      }
+    } else {
+      // 通常の文字（クォート内の改行も含む）
+      currentField += char;
+    }
+  }
+  
+  // 最後のフィールドと行を追加
+  if (currentField || currentRow.length > 0) {
+    currentRow.push(currentField.trim());
+    if (currentRow.some(field => field !== '')) {
+      result.push(currentRow);
+    }
+  }
   
   return result;
 }
@@ -117,19 +167,26 @@ function validateCSVData(csvData, options = {}) {
       throw new Error('CSVデータが無効です');
     }
     
-    // 最大列数チェック
-    const maxColumns = 100;
+    // 各行の列数を正規化（不足している列を空文字で補完）
+    const maxColumnsInData = Math.max(...csvData.map(row => row.length));
+    const maxAllowedColumns = 100;
     const firstRowColumns = csvData[0].length;
     
-    if (firstRowColumns > maxColumns) {
-      throw new Error(`列数が制限を超えています: ${firstRowColumns}列 (最大: ${maxColumns}列)`);
+    // 最大列数チェック
+    if (maxColumnsInData > maxAllowedColumns) {
+      throw new Error(`列数が制限を超えています: ${maxColumnsInData}列 (最大: ${maxAllowedColumns}列)`);
     }
-    
-    // 各行の列数一貫性チェック
     const inconsistentRows = [];
-    for (let i = 1; i < csvData.length; i++) {
-      if (csvData[i].length !== firstRowColumns) {
+    
+    for (let i = 0; i < csvData.length; i++) {
+      const row = csvData[i];
+      if (row.length !== maxColumnsInData) {
         inconsistentRows.push(i + 1); // 1ベースの行番号
+        
+        // 不足している列を空文字で補完
+        while (row.length < maxColumnsInData) {
+          row.push('');
+        }
       }
     }
     
@@ -138,8 +195,7 @@ function validateCSVData(csvData, options = {}) {
       const reportRows = inconsistentRows.slice(0, maxReportRows);
       const moreRows = inconsistentRows.length > maxReportRows ? ` (他${inconsistentRows.length - maxReportRows}行)` : '';
       
-      Logger.log(`[csvProcessor.gs] 警告: 列数が不一致の行があります: ${reportRows.join(', ')}行目${moreRows}`);
-      // 警告として記録するが、処理は継続
+      Logger.log(`[csvProcessor.gs] 警告: 列数が不一致の行がありましたが、自動補完しました: ${reportRows.join(', ')}行目${moreRows}`);
     }
     
     // ヘッダー行の検証（存在する場合）
