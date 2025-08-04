@@ -290,8 +290,20 @@ function executeDataTransfer(settings = null) {
       throw new Error('LPcsvシートにデータがありません。まずCSVをインポートしてください。');
     }
     
+    // 設定シートから設定を読み込み（settingsがnullの場合）
+    let finalSettings = settings;
+    if (!finalSettings) {
+      Logger.log('[main.gs] 設定シートから設定を読み込み');
+      const mfSettings = loadMFSettingsFromSheet();
+      finalSettings = {
+        ppformat: TRANSFER_CONFIG.DEFAULT_SETTINGS.ppformat,
+        mfformat: mfSettings
+      };
+      Logger.log(`[main.gs] 読み込んだ設定: ${JSON.stringify(finalSettings)}`);
+    }
+    
     // データ転記実行
-    const result = transferDataFromLPcsv(settings);
+    const result = transferDataFromLPcsv(finalSettings);
     
     const processingTime = new Date().getTime() - startTime;
     Logger.log(`[main.gs] データ転記完了: ${processingTime}ms`);
