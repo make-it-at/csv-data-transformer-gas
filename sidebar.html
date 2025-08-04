@@ -371,6 +371,31 @@
     </div>
   </div>
 
+  <!-- データ転記セクション -->
+  <div class="section">
+    <div class="section-title">
+      <span class="icon">🔄</span>
+      データ転記
+    </div>
+    
+    <p class="description">LPcsvのデータをPPformat・MFformatに転記します</p>
+    
+    <div class="form-group">
+      <button id="transferBtn" class="btn btn-primary btn-full">
+        ▶️ データ転記実行
+      </button>
+    </div>
+
+    <div id="transferProgress" class="progress-container" style="display: none;">
+      <div class="progress-bar">
+        <div class="progress-fill" id="transferProgressFill"></div>
+      </div>
+      <div class="progress-text" id="transferProgressText">処理中...</div>
+    </div>
+
+    <div id="transferResult" class="result-message" style="display: none;"></div>
+  </div>
+
   <!-- ログ表示セクション -->
   <div class="section">
     <div class="section-title">
@@ -428,6 +453,13 @@
       // ボタンクリック
       importBtn.addEventListener('click', handleImport);
       refreshBtn.addEventListener('click', loadSheetStatus);
+      
+      // データ転記ボタン
+      const transferBtn = document.getElementById('transferBtn');
+      if (transferBtn) {
+        transferBtn.addEventListener('click', handleDataTransfer);
+      }
+      
       clearLogBtn.addEventListener('click', clearLogs);
     }
 
@@ -673,6 +705,80 @@
       
       logViewer.innerHTML = html;
       logViewer.scrollTop = logViewer.scrollHeight;
+    }
+
+    // データ転記処理
+    function handleDataTransfer() {
+      const transferBtn = document.getElementById('transferBtn');
+      const transferProgress = document.getElementById('transferProgress');
+      const transferProgressFill = document.getElementById('transferProgressFill');
+      const transferProgressText = document.getElementById('transferProgressText');
+      const transferResult = document.getElementById('transferResult');
+
+      // ボタンを無効化
+      transferBtn.disabled = true;
+      transferBtn.textContent = '転記中...';
+
+      // プログレスバーを表示
+      transferProgress.style.display = 'block';
+      transferResult.style.display = 'none';
+      
+      // プログレス開始
+      let progress = 0;
+      const progressInterval = setInterval(() => {
+        progress += 10;
+        if (progress <= 90) {
+          transferProgressFill.style.width = progress + '%';
+          transferProgressText.textContent = `処理中... ${progress}%`;
+        }
+      }, 200);
+
+      // データ転記実行
+      google.script.run
+        .withSuccessHandler(function(result) {
+          clearInterval(progressInterval);
+          
+          // プログレス完了
+          transferProgressFill.style.width = '100%';
+          transferProgressText.textContent = '完了';
+          
+          setTimeout(() => {
+            transferProgress.style.display = 'none';
+            transferResult.style.display = 'block';
+            
+            if (result.success) {
+              transferResult.className = 'result-message success';
+              transferResult.textContent = result.message;
+              showStatus('success', result.message);
+              
+              // シート状態を更新
+              loadSheetStatus();
+              loadRecentLogs();
+            } else {
+              transferResult.className = 'result-message error';
+              transferResult.textContent = result.message;
+              showStatus('error', result.message);
+            }
+            
+            // ボタンを復元
+            transferBtn.disabled = false;
+            transferBtn.textContent = '▶️ データ転記実行';
+          }, 1000);
+        })
+        .withFailureHandler(function(error) {
+          clearInterval(progressInterval);
+          transferProgress.style.display = 'none';
+          transferResult.style.display = 'block';
+          transferResult.className = 'result-message error';
+          transferResult.textContent = 'エラー: ' + error.message;
+          
+          showStatus('error', 'データ転記エラー: ' + error.message);
+          
+          // ボタンを復元
+          transferBtn.disabled = false;
+          transferBtn.textContent = '▶️ データ転記実行';
+        })
+        .executeDataTransfer();
     }
 
     // ログクリア

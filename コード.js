@@ -226,3 +226,67 @@ function getSheetStatus() {
     };
   }
 }
+
+/**
+ * データ転記処理の実行
+ * LPcsvのデータをPPformat・MFformatに転記
+ * 
+ * @param {Object} settings - 転記設定（オプション）
+ * @return {Object} 処理結果
+ */
+function executeDataTransfer(settings = null) {
+  const startTime = new Date().getTime();
+  
+  try {
+    Logger.log('[main.gs] データ転記実行開始');
+    
+    // 必要なシートが存在するかチェック
+    initializeSheets();
+    
+    // LPcsvにデータがあるかチェック
+    const lpCsvSheet = getSheetSafely(SHEET_NAMES.LPCSV);
+    const lastRow = lpCsvSheet.getLastRow();
+    
+    if (lastRow <= 1) {
+      throw new Error('LPcsvシートにデータがありません。まずCSVをインポートしてください。');
+    }
+    
+    // データ転記実行
+    const result = transferDataFromLPcsv(settings);
+    
+    const processingTime = new Date().getTime() - startTime;
+    Logger.log(`[main.gs] データ転記完了: ${processingTime}ms`);
+    
+    // 成功メッセージをログに記録
+    writeLog('INFO', 'データ転記', `転記処理完了: ${result.totalProcessed}行処理`, {
+      ppformat: result.ppformat,
+      mfformat: result.mfformat,
+      processingTime: processingTime
+    });
+    
+    return {
+      success: true,
+      message: `データ転記が完了しました。PPformat: ${result.ppformat?.processedRows || 0}行, MFformat: ${result.mfformat?.processedRows || 0}行`,
+      result: result,
+      processingTime: processingTime
+    };
+    
+  } catch (error) {
+    const processingTime = new Date().getTime() - startTime;
+    Logger.log(`[main.gs] データ転記エラー: ${error.message}`);
+    
+    writeLog('ERROR', 'データ転記エラー', error.message, {
+      processingTime: processingTime,
+      stack: error.stack
+    });
+    
+    showErrorDialog('データ転記エラー', error.message);
+    
+    return {
+      success: false,
+      message: `データ転記エラー: ${error.message}`,
+      error: error.message,
+      processingTime: processingTime
+    };
+  }
+}
