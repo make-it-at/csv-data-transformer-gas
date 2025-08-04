@@ -131,6 +131,13 @@ function transferDataFromLPcsv(settings = null) {
     
     Logger.log(`[dataTransformer.gs] ソースデータ: ${sourceData.length}行`);
     
+    // ヘッダー情報の確認
+    if (sourceData.length > 0) {
+      const headerInfo = extractHeaders(sourceData);
+      Logger.log(`[dataTransformer.gs] ヘッダー情報: ${JSON.stringify(headerInfo.headers)}`);
+      Logger.log(`[dataTransformer.gs] データ行数: ${sourceData.length - (headerInfo.hasHeaders ? 1 : 0)}行`);
+    }
+    
     const results = {
       ppformat: null,
       mfformat: null,
@@ -198,7 +205,8 @@ function transferToPPformat(sourceData, config) {
   const targetSheet = getSheetSafely(SHEET_NAMES.PPFORMAT);
   
   // ヘッダー行の設定
-  const sourceHeaders = extractHeaders(sourceData);
+  const headerInfo = extractHeaders(sourceData);
+  const sourceHeaders = headerInfo.headers;
   const targetHeaders = TRANSFER_CONFIG.PPFORMAT_COLUMNS;
   
   // データの変換
@@ -223,6 +231,9 @@ function transferToPPformat(sourceData, config) {
  */
 function transformToPPformatData(sourceData, config, sourceHeaders) {
   const transformedData = [];
+  let filteredCount = 0;
+  
+  Logger.log(`[dataTransformer.gs] PPformat変換開始: ${sourceData.length - 1}行処理予定`);
   
   // ヘッダー行をスキップ（1行目）
   for (let i = 1; i < sourceData.length; i++) {
@@ -230,6 +241,7 @@ function transformToPPformatData(sourceData, config, sourceHeaders) {
     
     // フィルタリング処理
     if (!passesPPformatFilters(sourceRow, sourceHeaders, config.filters)) {
+      filteredCount++;
       continue;
     }
     
@@ -238,6 +250,8 @@ function transformToPPformatData(sourceData, config, sourceHeaders) {
     
     transformedData.push(targetRow);
   }
+  
+  Logger.log(`[dataTransformer.gs] PPformat変換完了: ${transformedData.length}行変換, ${filteredCount}行除外`);
   
   return transformedData;
 }
@@ -297,7 +311,7 @@ function buildPPformatRow(sourceRow, sourceHeaders, transformations) {
     '-',                     // 変換レート（円）
     '-',                     // 利用国
     '-',                     // 取引内容
-    partner || content,      // 取引先
+    content || partner,      // 取引先（内容を優先、空白の場合は相手）
     '-',                     // 取引方法
     '-',                     // 支払い区分
     '-',                     // 利用者
@@ -382,7 +396,8 @@ function transferToMFformat(sourceData, config) {
   const targetSheet = getSheetSafely(SHEET_NAMES.MFFORMAT);
   
   // ヘッダー行の設定
-  const sourceHeaders = extractHeaders(sourceData);
+  const headerInfo = extractHeaders(sourceData);
+  const sourceHeaders = headerInfo.headers;
   const targetHeaders = TRANSFER_CONFIG.MFFORMAT_COLUMNS;
   
   // データの変換
@@ -408,6 +423,9 @@ function transferToMFformat(sourceData, config) {
 function transformToMFformatData(sourceData, config, sourceHeaders) {
   const transformedData = [];
   let transactionNo = 1;
+  let filteredCount = 0;
+  
+  Logger.log(`[dataTransformer.gs] MFformat変換開始: ${sourceData.length - 1}行処理予定`);
   
   // ヘッダー行をスキップ（1行目）
   for (let i = 1; i < sourceData.length; i++) {
@@ -415,6 +433,7 @@ function transformToMFformatData(sourceData, config, sourceHeaders) {
     
     // フィルタリング処理
     if (!passesMFformatFilters(sourceRow, sourceHeaders, config.filters)) {
+      filteredCount++;
       continue;
     }
     
@@ -424,6 +443,8 @@ function transformToMFformatData(sourceData, config, sourceHeaders) {
     transformedData.push(targetRow);
     transactionNo++;
   }
+  
+  Logger.log(`[dataTransformer.gs] MFformat変換完了: ${transformedData.length}行変換, ${filteredCount}行除外`);
   
   return transformedData;
 }
@@ -488,7 +509,7 @@ function buildMFformatRow(sourceRow, sourceHeaders, transformations, transaction
     debitAccount,                     // 借方勘定科目
     '',                               // 借方補助科目
     '',                               // 借方部門
-    partner || '',                    // 借方取引先
+    content || '',                    // 借方取引先（内容を使用）
     taxCategory,                      // 借方税区分
     '',                               // 借方インボイス
     numericAmount,                    // 借方金額(円)
@@ -496,7 +517,7 @@ function buildMFformatRow(sourceRow, sourceHeaders, transformations, transaction
     creditAccount,                    // 貸方勘定科目
     '',                               // 貸方補助科目
     '',                               // 貸方部門
-    partner || '',                    // 貸方取引先
+    content || '',                    // 貸方取引先（内容を使用）
     taxCategory,                      // 貸方税区分
     '',                               // 貸方インボイス
     numericAmount,                    // 貸方金額(円)
