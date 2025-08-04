@@ -131,13 +131,6 @@ function transferDataFromLPcsv(settings = null) {
     
     Logger.log(`[dataTransformer.gs] ソースデータ: ${sourceData.length}行`);
     
-    // ヘッダー情報の確認
-    if (sourceData.length > 0) {
-      const headerInfo = extractHeaders(sourceData);
-      Logger.log(`[dataTransformer.gs] ヘッダー情報: ${JSON.stringify(headerInfo.headers)}`);
-      Logger.log(`[dataTransformer.gs] データ行数: ${sourceData.length - (headerInfo.hasHeaders ? 1 : 0)}行`);
-    }
-    
     const results = {
       ppformat: null,
       mfformat: null,
@@ -205,8 +198,7 @@ function transferToPPformat(sourceData, config) {
   const targetSheet = getSheetSafely(SHEET_NAMES.PPFORMAT);
   
   // ヘッダー行の設定
-  const headerInfo = extractHeaders(sourceData);
-  const sourceHeaders = headerInfo.headers;
+  const sourceHeaders = extractHeaders(sourceData);
   const targetHeaders = TRANSFER_CONFIG.PPFORMAT_COLUMNS;
   
   // データの変換
@@ -231,9 +223,6 @@ function transferToPPformat(sourceData, config) {
  */
 function transformToPPformatData(sourceData, config, sourceHeaders) {
   const transformedData = [];
-  let filteredCount = 0;
-  
-  Logger.log(`[dataTransformer.gs] PPformat変換開始: ${sourceData.length - 1}行処理予定`);
   
   // ヘッダー行をスキップ（1行目）
   for (let i = 1; i < sourceData.length; i++) {
@@ -241,7 +230,6 @@ function transformToPPformatData(sourceData, config, sourceHeaders) {
     
     // フィルタリング処理
     if (!passesPPformatFilters(sourceRow, sourceHeaders, config.filters)) {
-      filteredCount++;
       continue;
     }
     
@@ -250,8 +238,6 @@ function transformToPPformatData(sourceData, config, sourceHeaders) {
     
     transformedData.push(targetRow);
   }
-  
-  Logger.log(`[dataTransformer.gs] PPformat変換完了: ${transformedData.length}行変換, ${filteredCount}行除外`);
   
   return transformedData;
 }
@@ -396,8 +382,7 @@ function transferToMFformat(sourceData, config) {
   const targetSheet = getSheetSafely(SHEET_NAMES.MFFORMAT);
   
   // ヘッダー行の設定
-  const headerInfo = extractHeaders(sourceData);
-  const sourceHeaders = headerInfo.headers;
+  const sourceHeaders = extractHeaders(sourceData);
   const targetHeaders = TRANSFER_CONFIG.MFFORMAT_COLUMNS;
   
   // データの変換
