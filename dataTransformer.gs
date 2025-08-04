@@ -422,14 +422,35 @@ function transferToMFformat(sourceData, config) {
  */
 function transformToMFformatData(sourceData, config, sourceHeaders) {
   const transformedData = [];
-  let transactionNo = 1;
   let filteredCount = 0;
   
   Logger.log(`[dataTransformer.gs] MFformat変換開始: ${sourceData.length - 1}行処理予定`);
   
-  // ヘッダー行をスキップ（1行目）
-  for (let i = 1; i < sourceData.length; i++) {
-    const sourceRow = sourceData[i];
+  // 日付インデックスを取得
+  const dateIndex = sourceHeaders.indexOf('日付');
+  
+  // ヘッダー行をスキップしてデータ行のみを取得
+  const dataRows = sourceData.slice(1);
+  
+  // 日付順でソート（古い順）
+  const sortedRows = dataRows.sort((a, b) => {
+    const dateA = new Date(a[dateIndex] || '');
+    const dateB = new Date(b[dateIndex] || '');
+    
+    // 無効な日付は最後に配置
+    if (isNaN(dateA.getTime()) && isNaN(dateB.getTime())) return 0;
+    if (isNaN(dateA.getTime())) return 1;
+    if (isNaN(dateB.getTime())) return -1;
+    
+    return dateA.getTime() - dateB.getTime();
+  });
+  
+  Logger.log(`[dataTransformer.gs] データを日付順でソート完了: ${sortedRows.length}行`);
+  
+  // ソート済みデータを処理
+  let transactionNo = 1;
+  for (let i = 0; i < sortedRows.length; i++) {
+    const sourceRow = sortedRows[i];
     
     // フィルタリング処理
     if (!passesMFformatFilters(sourceRow, sourceHeaders, config.filters)) {
@@ -444,7 +465,7 @@ function transformToMFformatData(sourceData, config, sourceHeaders) {
     transactionNo++;
   }
   
-  Logger.log(`[dataTransformer.gs] MFformat変換完了: ${transformedData.length}行変換, ${filteredCount}行除外`);
+  Logger.log(`[dataTransformer.gs] MFformat変換完了: ${transformedData.length}行変換, ${filteredCount}行除外（日付順）`);
   
   return transformedData;
 }

@@ -445,7 +445,22 @@ function createDataUri(csvContent, fileName) {
  */
 function getMFformatSettings() {
   try {
-    const settings = TRANSFER_CONFIG.DEFAULT_SETTINGS.mfformat;
+    Logger.log('[main.gs] MFformat設定取得開始');
+    
+    // PropertiesServiceから保存済み設定を取得
+    const properties = PropertiesService.getScriptProperties();
+    const savedSettings = properties.getProperty('MFFORMAT_SETTINGS');
+    
+    let settings;
+    if (savedSettings) {
+      // 保存済み設定がある場合は使用
+      settings = JSON.parse(savedSettings);
+      Logger.log('[main.gs] 保存済み設定を読み込み');
+    } else {
+      // 保存済み設定がない場合はデフォルト設定を使用
+      settings = TRANSFER_CONFIG.DEFAULT_SETTINGS.mfformat;
+      Logger.log('[main.gs] デフォルト設定を使用');
+    }
     
     return {
       success: true,
@@ -455,9 +470,10 @@ function getMFformatSettings() {
   } catch (error) {
     Logger.log(`[main.gs] MFformat設定取得エラー: ${error.message}`);
     
+    // エラー時はデフォルト設定を返す
     return {
-      success: false,
-      error: error.message
+      success: true,
+      settings: TRANSFER_CONFIG.DEFAULT_SETTINGS.mfformat
     };
   }
 }
