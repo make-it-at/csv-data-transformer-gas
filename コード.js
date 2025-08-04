@@ -290,3 +290,111 @@ function executeDataTransfer(settings = null) {
     };
   }
 }
+
+/**
+ * PPformat CSVエクスポート処理の実行
+ * 
+ * @param {Object} options - エクスポートオプション
+ * @return {Object} 処理結果
+ */
+function executePPformatExport(options = {}) {
+  const startTime = new Date().getTime();
+  
+  try {
+    Logger.log('[main.gs] PPformat CSVエクスポート実行開始');
+    
+    // PPformatにデータがあるかチェック
+    const ppFormatSheet = getSheetSafely(SHEET_NAMES.PPFORMAT);
+    const lastRow = ppFormatSheet.getLastRow();
+    
+    if (lastRow <= 1) {
+      throw new Error('PPformatシートにデータがありません。まずデータ転記を実行してください。');
+    }
+    
+    // CSVエクスポート実行
+    const result = exportPPformatToCSV(options);
+    
+    // ダウンロードURL生成
+    const downloadInfo = createDownloadUrl(result.blob, result.fileName);
+    
+    const processingTime = new Date().getTime() - startTime;
+    Logger.log(`[main.gs] PPformat CSVエクスポート完了: ${processingTime}ms`);
+    
+    return {
+      success: true,
+      message: `PPformat CSVエクスポートが完了しました。${result.rowCount}行を出力しました。`,
+      downloadUrl: downloadInfo.downloadUrl,
+      fileName: downloadInfo.fileName,
+      fileId: downloadInfo.fileId,
+      rowCount: result.rowCount,
+      processingTime: processingTime
+    };
+    
+  } catch (error) {
+    const processingTime = new Date().getTime() - startTime;
+    Logger.log(`[main.gs] PPformat CSVエクスポートエラー: ${error.message}`);
+    
+    showErrorDialog('PPformat CSVエクスポートエラー', error.message);
+    
+    return {
+      success: false,
+      message: `PPformat CSVエクスポートエラー: ${error.message}`,
+      error: error.message,
+      processingTime: processingTime
+    };
+  }
+}
+
+/**
+ * MFformat CSVエクスポート処理の実行
+ * 
+ * @param {Object} options - エクスポートオプション
+ * @return {Object} 処理結果
+ */
+function executeMFformatExport(options = {}) {
+  const startTime = new Date().getTime();
+  
+  try {
+    Logger.log('[main.gs] MFformat CSVエクスポート実行開始');
+    
+    // MFformatにデータがあるかチェック
+    const mfFormatSheet = getSheetSafely(SHEET_NAMES.MFFORMAT);
+    const lastRow = mfFormatSheet.getLastRow();
+    
+    if (lastRow <= 1) {
+      throw new Error('MFformatシートにデータがありません。まずデータ転記を実行してください。');
+    }
+    
+    // CSVエクスポート実行
+    const result = exportMFformatToCSV(options);
+    
+    // ダウンロードURL生成
+    const downloadInfo = createDownloadUrl(result.blob, result.fileName);
+    
+    const processingTime = new Date().getTime() - startTime;
+    Logger.log(`[main.gs] MFformat CSVエクスポート完了: ${processingTime}ms`);
+    
+    return {
+      success: true,
+      message: `MFformat CSVエクスポートが完了しました。${result.rowCount}行を出力しました。`,
+      downloadUrl: downloadInfo.downloadUrl,
+      fileName: downloadInfo.fileName,
+      fileId: downloadInfo.fileId,
+      rowCount: result.rowCount,
+      processingTime: processingTime
+    };
+    
+  } catch (error) {
+    const processingTime = new Date().getTime() - startTime;
+    Logger.log(`[main.gs] MFformat CSVエクスポートエラー: ${error.message}`);
+    
+    showErrorDialog('MFformat CSVエクスポートエラー', error.message);
+    
+    return {
+      success: false,
+      message: `MFformat CSVエクスポートエラー: ${error.message}`,
+      error: error.message,
+      processingTime: processingTime
+    };
+  }
+}

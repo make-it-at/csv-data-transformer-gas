@@ -396,6 +396,37 @@
     <div id="transferResult" class="result-message" style="display: none;"></div>
   </div>
 
+  <!-- CSVエクスポートセクション -->
+  <div class="section">
+    <div class="section-title">
+      <span class="icon">📥</span>
+      CSVエクスポート
+    </div>
+    
+    <p class="description">PPformat・MFformatシートからCSVファイルをダウンロードします</p>
+    
+    <div class="form-group">
+      <button id="exportPPBtn" class="btn btn-secondary btn-full">
+        📊 PPformat CSV出力
+      </button>
+    </div>
+
+    <div class="form-group">
+      <button id="exportMFBtn" class="btn btn-secondary btn-full">
+        📈 MFformat CSV出力
+      </button>
+    </div>
+
+    <div id="exportProgress" class="progress-container" style="display: none;">
+      <div class="progress-bar">
+        <div class="progress-fill" id="exportProgressFill"></div>
+      </div>
+      <div class="progress-text" id="exportProgressText">処理中...</div>
+    </div>
+
+    <div id="exportResult" class="result-message" style="display: none;"></div>
+  </div>
+
   <!-- ログ表示セクション -->
   <div class="section">
     <div class="section-title">
@@ -458,6 +489,16 @@
       const transferBtn = document.getElementById('transferBtn');
       if (transferBtn) {
         transferBtn.addEventListener('click', handleDataTransfer);
+      }
+      
+      // CSVエクスポートボタン
+      const exportPPBtn = document.getElementById('exportPPBtn');
+      const exportMFBtn = document.getElementById('exportMFBtn');
+      if (exportPPBtn) {
+        exportPPBtn.addEventListener('click', () => handleCSVExport('ppformat'));
+      }
+      if (exportMFBtn) {
+        exportMFBtn.addEventListener('click', () => handleCSVExport('mfformat'));
       }
       
       clearLogBtn.addEventListener('click', clearLogs);
@@ -779,6 +820,106 @@
           transferBtn.textContent = '▶️ データ転記実行';
         })
         .executeDataTransfer();
+    }
+
+    // CSVエクスポート処理
+    function handleCSVExport(type) {
+      const exportPPBtn = document.getElementById('exportPPBtn');
+      const exportMFBtn = document.getElementById('exportMFBtn');
+      const exportProgress = document.getElementById('exportProgress');
+      const exportProgressFill = document.getElementById('exportProgressFill');
+      const exportProgressText = document.getElementById('exportProgressText');
+      const exportResult = document.getElementById('exportResult');
+
+      // ボタンを無効化
+      if (exportPPBtn) exportPPBtn.disabled = true;
+      if (exportMFBtn) exportMFBtn.disabled = true;
+      
+      const targetBtn = type === 'ppformat' ? exportPPBtn : exportMFBtn;
+      const originalText = targetBtn.textContent;
+      targetBtn.textContent = 'エクスポート中...';
+
+      // プログレスバーを表示
+      exportProgress.style.display = 'block';
+      exportResult.style.display = 'none';
+      
+      // プログレス開始
+      let progress = 0;
+      const progressInterval = setInterval(() => {
+        progress += 15;
+        if (progress <= 90) {
+          exportProgressFill.style.width = progress + '%';
+          exportProgressText.textContent = `処理中... ${progress}%`;
+        }
+      }, 300);
+
+      // エクスポート関数の選択
+      const exportFunction = type === 'ppformat' ? 'executePPformatExport' : 'executeMFformatExport';
+
+      // CSVエクスポート実行
+      google.script.run
+        .withSuccessHandler(function(result) {
+          clearInterval(progressInterval);
+          
+          // プログレス完了
+          exportProgressFill.style.width = '100%';
+          exportProgressText.textContent = '完了';
+          
+          setTimeout(() => {
+            exportProgress.style.display = 'none';
+            exportResult.style.display = 'block';
+            
+            if (result.success) {
+              exportResult.className = 'result-message success';
+              exportResult.innerHTML = `
+                <div>${result.message}</div>
+                <div style="margin-top: 8px;">
+                  <a href="${result.downloadUrl}" target="_blank" class="btn btn-primary" style="display: inline-block; padding: 8px 16px; text-decoration: none; border-radius: 4px;">
+                    📥 ${result.fileName} をダウンロード
+                  </a>
+                </div>
+              `;
+              showStatus('success', result.message);
+              
+              // シート状態を更新
+              loadSheetStatus();
+              loadRecentLogs();
+            } else {
+              exportResult.className = 'result-message error';
+              exportResult.textContent = result.message;
+              showStatus('error', result.message);
+            }
+            
+            // ボタンを復元
+            if (exportPPBtn) {
+              exportPPBtn.disabled = false;
+              exportPPBtn.textContent = '📊 PPformat CSV出力';
+            }
+            if (exportMFBtn) {
+              exportMFBtn.disabled = false;
+              exportMFBtn.textContent = '📈 MFformat CSV出力';
+            }
+          }, 1000);
+        })
+        .withFailureHandler(function(error) {
+          clearInterval(progressInterval);
+          exportProgress.style.display = 'none';
+          exportResult.style.display = 'block';
+          exportResult.className = 'result-message error';
+          exportResult.textContent = 'エラー: ' + error.message;
+          
+          showStatus('error', 'CSVエクスポートエラー: ' + error.message);
+          
+          // ボタンを復元
+          if (exportPPBtn) {
+            exportPPBtn.disabled = false;
+            exportPPBtn.textContent = '📊 PPformat CSV出力';
+          }
+          if (exportMFBtn) {
+            exportMFBtn.disabled = false;
+            exportMFBtn.textContent = '📈 MFformat CSV出力';
+          }
+        })[exportFunction]();
     }
 
     // ログクリア
