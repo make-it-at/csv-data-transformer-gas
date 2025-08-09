@@ -2870,7 +2870,7 @@ function updateReferenceInfoBatched() {
  * _Reference情報更新（シンプル版 - 直接呼び出し用）
  */
 function updateReferenceInfo() {
-  return MainController.updateReferenceInfo();
+  return MainController.updateReferenceInfoBatched();
 }
 
 /**
