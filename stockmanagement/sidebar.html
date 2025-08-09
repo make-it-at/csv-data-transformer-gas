@@ -144,6 +144,14 @@
 </head>
 <body class="p-4">
   <div class="container mx-auto">
+    <!-- バージョン情報 -->
+    <div class="p-3 bg-gray-100 rounded-lg shadow mb-4">
+      <div class="flex justify-between items-center">
+        <span class="text-sm font-medium text-gray-700">システムバージョン</span>
+        <span id="versionInfo" class="text-sm text-gray-600">読み込み中...</span>
+      </div>
+    </div>
+
     <!-- 操作ボタン -->
     <div class="p-4 bg-white rounded-lg shadow mb-4">
       <h2 class="text-lg font-semibold mb-3">操作</h2>
@@ -591,6 +599,56 @@
       updateProgressDisplay(data);
     }
   }).getLatestProgressFromProperties();
+
+  // バージョン情報を読み込む
+  window.addEventListener('load', function() {
+    loadVersionInfo();
+  });
+
+  /**
+   * バージョン情報を読み込んで表示する
+   */
+  function loadVersionInfo() {
+    google.script.run
+      .withSuccessHandler(function(versionInfo) {
+        const versionElement = document.getElementById('versionInfo');
+        if (versionElement && versionInfo) {
+          versionElement.textContent = `v${versionInfo.version} (${versionInfo.formattedBuildDate})`;
+          versionElement.title = `ビルド日時: ${versionInfo.formattedBuildDate}\n最新のリリースノート:\n${versionInfo.releaseNotes.slice(0, 3).join('\n')}`;
+        }
+      })
+      .withFailureHandler(function(error) {
+        const versionElement = document.getElementById('versionInfo');
+        if (versionElement) {
+          versionElement.textContent = 'バージョン情報取得エラー';
+          versionElement.title = `エラー: ${error.message}`;
+        }
+        console.error('バージョン情報取得エラー:', error);
+      })
+      .getVersionInfo();
+  }
+
+  /**
+   * バージョン情報エリアをクリックした時の処理
+   */
+  document.addEventListener('DOMContentLoaded', function() {
+    const versionElement = document.getElementById('versionInfo');
+    if (versionElement) {
+      versionElement.style.cursor = 'pointer';
+      versionElement.addEventListener('click', function() {
+        google.script.run
+          .withSuccessHandler(function(systemInfo) {
+            const releaseNotes = systemInfo.releaseNotes.join('\n');
+            const message = `システム情報:\n\nバージョン: v${systemInfo.version}\nビルド日時: ${systemInfo.buildDate}\nタイムゾーン: ${systemInfo.timeZone}\n\nリリースノート:\n${releaseNotes}`;
+            alert(message);
+          })
+          .withFailureHandler(function(error) {
+            alert(`システム情報取得エラー: ${error.message}`);
+          })
+          .getSystemInfo();
+      });
+    }
+  });
   </script>
 </body>
 </html>
