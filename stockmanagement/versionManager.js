@@ -6,9 +6,10 @@ var VersionManager = {
   
   // システムバージョン情報
   VERSION_INFO: {
-    version: '1.2.0',
-    buildDate: '2025-08-09T13:30:00Z',
+    version: '1.2.1',
+    buildDate: '2025-08-09T14:00:00Z',
     releaseNotes: [
+      'v1.2.1: 分割処理版エラーを修正し従来版を使用するように変更',
       'v1.2.0: _Reference情報更新の処理再開機能を修正',
       'v1.1.0: 分割処理によるバッチ処理システムを実装', 
       'v1.0.0: 初期リリース'
