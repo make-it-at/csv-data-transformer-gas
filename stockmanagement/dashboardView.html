@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ポートフォリオダッシュボード</title>
+  <script src="https://www.gstatic.com/charts/loader.js"></script>
+  <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      padding: 10px;
+      box-sizing: border-box;
+      gap: 10px;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .summary {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .summary-item {
+      background-color: white;
+      border-radius: 4px;
+      padding: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      flex: 1;
+    }
+
+    .summary-item h2 {
+      margin: 0;
+      font-size: 12px;
+      color: #666;
+    }
+
+    .summary-item .value-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .value-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .value-label {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .value {
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .difference {
+      font-size: 14px;
+      padding-top: 8px;
+      border-top: 1px solid #eee;
+      margin-top: 8px;
+    }
+
+    .difference.positive {
+      color: #34A853;
+    }
+
+    .difference.negative {
+      color: #EA4335;
+    }
+
+    .filter-container {
+      background-color: white;
+      border-radius: 4px;
+      padding: 15px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .filter-item {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .filter-item label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #666;
+    }
+
+    .filter-item select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      color: #333;
+      background-color: white;
+    }
+
+    .filter-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #eee;
+    }
+
+    .filter-reset {
+      padding: 8px 16px;
+      background-color: #f0f0f0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .filter-reset:hover {
+      background-color: #e0e0e0;
+      border-color: #ccc;
+    }
+
+    .charts-container {
+      display: flex;
+      flex-grow: 1;
+      gap: 10px;
+      min-height: 400px;
+    }
+
+    .chart-wrapper {
+      flex: 1;
+      background-color: white;
+      border-radius: 4px;
+      padding: 15px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      position: relative;
+    }
+
+    .chart {
+      height: 100%;
+      width: 100%;
+    }
+
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      z-index: 1000;
+    }
+
+    .error-message {
+      color: #EA4335;
+      text-align: center;
+      padding: 20px;
+      background-color: #FEE;
+      border-radius: 4px;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>ポートフォリオダッシュボード</h1>
+    
+    <div class="summary">
+      <div class="summary-item">
+        <h2>総資産額</h2>
+        <div class="value-container">
+          <div class="value-row">
+            <span class="value-label">評価額</span>
+            <span id="currentValue" class="value">読み込み中...</span>
+          </div>
+          <div class="value-row">
+            <span class="value-label">購入額</span>
+            <span id="purchaseValue" class="value">読み込み中...</span>
+          </div>
+          <div id="valueDifference" class="difference">読み込み中...</div>
+        </div>
+      </div>
+      <div class="summary-item">
+        <h2>予想配当総額（年間）</h2>
+        <div class="value-container">
+          <div class="value-row">
+            <span class="value-label">配当金</span>
+            <span id="totalDividend" class="value">読み込み中...</span>
+          </div>
+        </div>
+      </div>
+      <div class="summary-item">
+        <h2>利回り</h2>
+        <div class="value-container">
+<div class="value-row">
+            <span class="value-label">簿価利回り</span>
+            <span id="bookYield" class="value">読み込み中...</span>
+          </div>
+          <div class="value-row">
+            <span class="value-label">配当利回り</span>
+            <span id="currentYield" class="value">読み込み中...</span>
+          </div>
+          <div id="yieldDifference" class="difference">読み込み中...</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-container">
+      <div class="filter-group">
+        <div class="filter-item">
+          <label for="productType">商品種別</label>
+          <select id="productType" onchange="applyFilters()">
+            <option value="all">全て</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <label for="accountType">口座種別</label>
+          <select id="accountType" onchange="applyFilters()">
+            <option value="all">全て</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <label for="industry">業種</label>
+          <select id="industry" onchange="applyFilters()">
+            <option value="all">全て</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <label for="sensitivity">景気感応度</label>
+          <select id="sensitivity" onchange="applyFilters()">
+            <option value="all">全て</option>
+          </select>
+        </div>
+      </div>
+      <div class="filter-actions">
+        <button class="filter-reset" onclick="resetFilters()">
+          フィルターをリセット
+        </button>
+      </div>
+    </div>
+
+    <div class="charts-container">
+      <div class="chart-wrapper">
+        <div id="industryChart" class="chart"></div>
+        <div id="industryLoading" class="loading">グラフを読み込んでいます...</div>
+      </div>
+      <div class="chart-wrapper">
+        <div id="yieldChart" class="chart"></div>
+        <div id="yieldLoading" class="loading">グラフを読み込んでいます...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let originalData = null;
+    const chartColors = {
+      productTypes: {
+        'JP': '#4285F4',   // 日本株
+        'US': '#34A853',   // 米国株
+        'FUND': '#FBBC05', // 投資信託
+        'MMF': '#EA4335'   // MMF
+      },
+      industry: [
+        '#4285F4', '#34A853', '#FBBC05', '#EA4335',
+        '#8064A2', '#9E9E9E', '#45B39D', '#DC7633',
+        '#5B2C6F', '#CB4335', '#3498DB', '#2ECC71',
+        '#F1C40F', '#E74C3C', '#9B59B6', '#1ABC9C',
+        '#D35400'
+      ]
+    };
+
+    // Googleチャートの読み込みと初期化
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(initializeDataFetch);
+
+    function initializeDataFetch() {
+      showLoading(true);
+      google.script.run
+        .withSuccessHandler(handleDataFetch)
+        .withFailureHandler(handleFetchError)
+        .getDashboardData();
+    }
+
+    function handleDataFetch(data) {
+      if (!data) {
+        showError('データが取得できませんでした');
+        return;
+      }
+
+      try {
+        console.log('データ取得完了:', data);
+        originalData = data;
+        
+        populateFilterOptions(data);
+        updateDashboard(data);
+        hideLoadingIndicators();
+      } catch (error) {
+        console.error('データ処理エラー:', error);
+        showError('データの処理中にエラーが発生しました: ' + error.message);
+      }
+    }
+
+    function hideLoadingIndicators() {
+      document.querySelectorAll('.loading').forEach(el => {
+        el.style.display = 'none';
+      });
+    }
+
+    function showError(message) {
+      hideLoadingIndicators();
+      document.querySelectorAll('.chart-wrapper').forEach(wrapper => {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.textContent = message;
+        wrapper.appendChild(errorDiv);
+      });
+    }
+
+    function handleFetchError(error) {
+      console.error('データ取得エラー:', error);
+      showError('データの取得に失敗しました: ' + error);
+    }
+
+    function updateSummary(data) {
+      // 評価額と購入額
+      document.getElementById('currentValue').innerText = formatCurrency(data.totalValue);
+      document.getElementById('purchaseValue').innerText = formatCurrency(data.totalPurchasePrice);
+      
+      // 差額の計算と表示
+      const difference = data.totalValue - data.totalPurchasePrice;
+      const differenceElement = document.getElementById('valueDifference');
+      const formattedDifference = formatCurrency(Math.abs(difference));
+      const prefix = difference >= 0 ? '+' : '-';
+      const percentageDiff = data.totalPurchasePrice > 0 ? 
+        ((difference/data.totalPurchasePrice)*100).toFixed(2) : '0.00';
+      differenceElement.innerText = `${prefix}${formattedDifference} (${percentageDiff}%)`;
+      differenceElement.className = `difference ${difference >= 0 ? 'positive' : 'negative'}`;
+
+      // 配当金
+      document.getElementById('totalDividend').innerText = formatCurrency(data.totalDividend);
+      
+      // 配当利回り（評価額ベース）
+      const currentYield = data.totalValue > 0 ? (data.totalDividend / data.totalValue) * 100 : 0;
+      document.getElementById('currentYield').innerText = formatPercentage(currentYield);
+      
+      // 簿価利回り
+      const bookYield = data.totalPurchasePrice > 0 ? (data.totalDividend / data.totalPurchasePrice) * 100 : 0;
+      document.getElementById('bookYield').innerText = formatPercentage(bookYield);
+
+// 利回りの差分（簿価利回り - 配当利回り）
+      const yieldDiff = bookYield - currentYield;
+      const yieldDiffElement = document.getElementById('yieldDifference');
+      const yieldPrefix = yieldDiff >= 0 ? '+' : '';
+      yieldDiffElement.innerText = `${yieldPrefix}${yieldDiff.toFixed(2)}%`;
+      yieldDiffElement.className = `difference ${yieldDiff >= 0 ? 'positive' : 'negative'}`;
+    }
+
+    function formatCurrency(value) {
+      return new Intl.NumberFormat('ja-JP', {
+        style: 'currency',
+        currency: 'JPY',
+        maximumFractionDigits: 0
+      }).format(value);
+    }
+
+    function formatPercentage(value) {
+      return new Intl.NumberFormat('ja-JP', {
+        style: 'percent',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(value / 100);
+    }
+
+    function populateFilterOptions(data) {
+      const stockData = data.stockData;
+      
+      const accountTypes = [...new Set(stockData.map(s => s.accountType))];
+      const industries = [...new Set(stockData.map(s => s.industry))];
+      const sensitivities = [...new Set(stockData.map(s => s.sensitivity))];
+      const productTypes = [...new Set(stockData.map(s => s.productType))];
+
+      populateSelect('accountType', accountTypes);
+      populateSelect('industry', industries);
+      populateSelect('sensitivity', sensitivities);
+      populateSelect('productType', productTypes, true);
+    }
+
+    function getStockColors(stockNames) {
+      const baseColors = chartColors.industry;
+      const sortedStocks = [...stockNames].sort();
+      const colorMap = {};
+      sortedStocks.forEach((stock, index) => {
+        colorMap[stock] = baseColors[index % baseColors.length];
+      });
+      return colorMap;
+    }
+
+    function createIndustryChart(data) {
+      if (!data || !data.stockData.length) return;
+
+      const allStockNames = [...new Set(data.stockData.map(s => s.name))];
+      const colorMap = getStockColors(allStockNames);
+
+      const stocksByIndustry = new Map();
+      data.stockData.forEach(stock => {
+        if (!stocksByIndustry.has(stock.industry)) {
+          stocksByIndustry.set(stock.industry, new Map());
+        }
+        stocksByIndustry.get(stock.industry).set(stock.name, stock.value);
+      });
+
+      const chartData = [['業種', ...allStockNames]];
+      Object.entries(data.industryData)
+        .sort(([, a], [, b]) => b.value - a.value)
+        .forEach(([industry]) => {
+          const row = [industry];
+          const industryStocks = stocksByIndustry.get(industry) || new Map();
+          
+          allStockNames.forEach(stockName => {
+            const value = industryStocks.get(stockName) || null;
+            row.push(value);
+          });
+          chartData.push(row);
+        });
+
+      const dataTable = new google.visualization.arrayToDataTable(chartData);
+      const options = {
+        title: '業種別評価額（17分類）',
+        height: '100%',
+        width: '100%',
+        isStacked: true,
+        legend: { position: 'none' },
+        chartArea: { left: '25%', top: '5%', width: '70%', height: '90%' },
+        colors: allStockNames.map(name => colorMap[name]),
+        hAxis: {
+          title: '評価額（円）',
+          format: 'short',
+          textStyle: { fontSize: 11 }
+        },
+        vAxis: { textStyle: { fontSize: 11 } },
+        bar: { groupWidth: '80%' }
+      };
+
+      const chart = new google.visualization.BarChart(
+        document.getElementById('industryChart')
+      );
+      chart.draw(dataTable, options);
+      document.getElementById('industryLoading').style.display = 'none';
+    }
+
+    function createYieldChart(data) {
+      if (!data || !data.stockData.length) return;
+
+      const allStockNames = [...new Set(data.stockData.map(s => s.name))];
+      const colorMap = getStockColors(allStockNames);
+
+      const yieldRanges = [
+        { min: 0, max: 1, label: '0-1%' },
+        { min: 1, max: 2, label: '1-2%' },
+        { min: 2, max: 3, label: '2-3%' },
+        { min: 3, max: 4, label: '3-4%' },
+        { min: 4, max: 5, label: '4-5%' },
+        { min: 5, max: Infinity, label: '5%以上' }
+      ];
+
+      const stocksByYield = new Map();
+      data.stockData.forEach(stock => {
+        if (stock.value > 0) {
+          const yield = (stock.dividend / stock.value) * 100;
+          const range = yieldRanges.find(r => yield >= r.min && yield < r.max);
+          if (range) {
+            if (!stocksByYield.has(range.label)) {
+              stocksByYield.set(range.label, new Map());
+            }
+            stocksByYield.get(range.label).set(stock.name, stock.value);
+          }
+        }
+      });
+
+      const chartData = [['利回り帯', ...allStockNames]];
+      yieldRanges.forEach(range => {
+        const yieldStocks = stocksByYield.get(range.label);
+        if (yieldStocks && yieldStocks.size > 0) {
+          const row = [range.label];
+          allStockNames.forEach(stockName => {
+            const value = yieldStocks.get(stockName) || null;
+            row.push(value);
+          });
+          chartData.push(row);
+        }
+      });
+
+      const dataTable = new google.visualization.arrayToDataTable(chartData);
+      const options = {
+        title: '利回り帯別評価額',
+        height: '100%',
+        width: '100%',
+        isStacked: true,
+        legend: { position: 'none' },
+        chartArea: { left: '15%', top: '5%', width: '80%', height: '90%' },
+        colors: allStockNames.map(name => colorMap[name]),
+        vAxis: { 
+          title: '評価額（円）',
+          format: 'short',
+          textStyle: { fontSize: 11 }
+        },
+        hAxis: { textStyle: { fontSize: 11 } },
+        bar: { groupWidth: '80%' }
+      };
+
+      const chart = new google.visualization.ColumnChart(
+        document.getElementById('yieldChart')
+      );
+      chart.draw(dataTable, options);
+      document.getElementById('yieldLoading').style.display = 'none';
+    }
+
+    function filterData(filters) {
+      if (!originalData) return null;
+
+      const filteredStocks = originalData.stockData.filter(stock => {
+        return (filters.accountType === 'all' || stock.accountType === filters.accountType) &&
+               (filters.industry === 'all' || stock.industry === filters.industry) &&
+               (filters.sensitivity === 'all' || stock.sensitivity === filters.sensitivity) &&
+               (filters.productType === 'all' || stock.productType === filters.productType);
+      });
+
+      return recalculateData(filteredStocks);
+    }
+
+    function recalculateData(filteredStocks) {
+      const newData = {
+        stockData: filteredStocks,
+        industryData: {},
+        totalValue: 0,
+        totalDividend: 0,
+        totalPurchasePrice: 0
+      };
+
+      filteredStocks.forEach(stock => {
+        if (!newData.industryData[stock.industry]) {
+          newData.industryData[stock.industry] = { value: 0, stocks: {} };
+        }
+        newData.industryData[stock.industry].value += stock.value;
+        newData.industryData[stock.industry].stocks[stock.name] = stock.value;
+        
+        newData.totalValue += stock.value;
+        newData.totalDividend += stock.dividend;
+        newData.totalPurchasePrice += stock.purchase_price;
+      });
+
+      newData.currentYield = newData.totalValue > 0 ? 
+        (newData.totalDividend / newData.totalValue) * 100 : 0;
+      newData.bookYield = newData.totalPurchasePrice > 0 ? 
+        (newData.totalDividend / newData.totalPurchasePrice) * 100 : 0;
+
+      return newData;
+    }
+
+    function applyFilters() {
+      const filters = {
+        accountType: document.getElementById('accountType').value,
+        industry: document.getElementById('industry').value,
+        sensitivity: document.getElementById('sensitivity').value,
+        productType: document.getElementById('productType').value
+      };
+
+      const filteredData = filterData(filters);
+      if (filteredData) {
+        updateDashboard(filteredData);
+      }
+    }
+
+    function populateSelect(id, values, isProductType = false) {
+      const select = document.getElementById(id);
+      select.innerHTML = '<option value="all">全て</option>';
+      
+      values.sort().forEach(value => {
+        if (value) {
+          const option = document.createElement('option');
+          option.value = value;
+          option.textContent = isProductType ? getProductTypeLabel(value) : value;
+          select.appendChild(option);
+        }
+      });
+    }
+
+    function getProductTypeLabel(type) {
+      const labels = {
+        'JP': '日本株',
+        'US': '米国株',
+        'FUND': '投資信託',
+        'MMF': 'MMF'
+      };
+      return labels[type] || type;
+    }
+
+    function updateDashboard(data) {
+      if (!data) return;
+      updateSummary(data);
+      createIndustryChart(data);
+      createYieldChart(data);
+    }
+
+    function resetFilters() {
+      ['accountType', 'industry', 'sensitivity', 'productType'].forEach(id => {
+        document.getElementById(id).value = 'all';
+      });
+      if (originalData) {
+        updateDashboard(originalData);
+      }
+    }
+
+    function showLoading(show) {
+      document.querySelectorAll('.loading').forEach(el => {
+        el.style.display = show ? 'block' : 'none';
+      });
+    }
+
+    window.addEventListener('resize', () => {
+      if (originalData) {
+        updateDashboard(originalData);
+      }
+    });
+  </script>
+</body>
+</html>

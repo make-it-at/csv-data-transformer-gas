@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* メッセージ表示エリアのスタイル */
+    #messageArea {
+      margin: 10px 0;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      min-height: 50px;
+      max-height: 200px;
+      overflow-y: auto;
+      background-color: #f9f9f9;
+    }
+    
+    /* コピーボタンのスタイル */
+    #copyButton {
+      margin-top: 5px;
+      padding: 5px 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    #copyButton:hover {
+      background-color: #45a049;
+    }
+    
+    #copyButton:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    
+    /* プログレスバーのスタイル */
+    .progress-bar {
+      width: 100%;
+      background-color: #f3f3f3;
+      border-radius: 4px;
+      margin: 10px 0;
+    }
+    
+    .progress {
+      height: 20px;
+      background-color: #4CAF50;
+      border-radius: 4px;
+      transition: width 0.3s;
+    }
+    
+    .progress-text {
+      text-align: center;
+      margin-top: 5px;
+      font-weight: bold;
+    }
+    
+    .progress-details {
+      text-align: center;
+      margin-top: 5px;
+      font-size: 0.9em;
+      color: #666;
+    }
+    
+    /* 処理フェーズ表示のスタイル */
+    .phase-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.8em;
+      font-weight: bold;
+      color: white;
+      background-color: #3498db;
+      margin-right: 5px;
+    }
+    
+    .phase-badge.phase-init {
+      background-color: #3498db;
+    }
+    
+    .phase-badge.phase-processing {
+      background-color: #f39c12;
+    }
+    
+    .phase-badge.phase-complete {
+      background-color: #2ecc71;
+    }
+    
+    .phase-badge.phase-error {
+      background-color: #e74c3c;
+    }
+    
+    /* 詳細情報エリアのスタイル */
+    .details-area {
+      margin-top: 10px;
+      padding: 8px;
+      border: 1px solid #eee;
+      border-radius: 4px;
+      background-color: #f9f9f9;
+      font-size: 0.85em;
+      max-height: 100px;
+      overflow-y: auto;
+    }
+    
+    .details-item {
+      margin: 2px 0;
+      display: flex;
+    }
+    
+    .details-label {
+      font-weight: bold;
+      width: 40%;
+      color: #555;
+    }
+    
+    .details-value {
+      width: 60%;
+    }
+    
+    /* ローディングインジケータのスタイル */
+    .loading {
+      display: none;
+      text-align: center;
+      margin: 10px 0;
+    }
+    
+    .loading-spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3498db;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 2s linear infinite;
+      margin: 0 auto;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body class="p-4">
+  <div class="container mx-auto">
+    <!-- 操作ボタン -->
+    <div class="p-4 bg-white rounded-lg shadow mb-4">
+      <h2 class="text-lg font-semibold mb-3">操作</h2>
+      <div class="grid grid-cols-1 gap-2">
+        <button onclick="updatePF()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full">
+          保有株リスト更新
+        </button>
+        <button onclick="updateTrendInfo()" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full">
+          トレンド情報更新
+        </button>
+        <button onclick="updateReferenceInfo()" class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded w-full">
+          _Reference情報更新
+        </button>
+        <button onclick="updateReferenceInfoBatched()" class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded w-full">
+          _Reference情報更新（分割処理）
+        </button>
+        <button onclick="continueReferenceInfoUpdate()" class="bg-orange-500 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded w-full">
+          分割処理を継続
+        </button>
+        <button onclick="clearBatchProcessingState()" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded w-full">
+          分割処理状態をクリア
+        </button>
+        <button onclick="cancelProcess()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-full">
+          処理をキャンセル
+        </button>
+      </div>
+    </div>
+    
+    <!-- 進捗表示 -->
+    <div class="p-4 bg-white rounded-lg shadow mb-4">
+      <h2 class="text-lg font-semibold mb-3">進捗状況</h2>
+      <div id="phaseIndicator" class="mb-2">
+        <span id="phaseBadge" class="phase-badge phase-init">準備中</span>
+        <span id="phaseText">処理を開始していません</span>
+      </div>
+      <div id="progressBar" class="progress-bar">
+        <div class="progress" style="width: 0%"></div>
+      </div>
+      <div id="progressText" class="progress-text">0%</div>
+      <div id="progressDetails" class="progress-details">0 / 0 件処理</div>
+      <div id="progressStatus" class="progress-details mt-2">準備中...</div>
+      <div id="timeRemaining" class="progress-details mt-1">残り時間: --:--</div>
+      
+      <!-- 詳細情報エリア -->
+      <div class="details-area" id="detailsArea">
+        <div class="details-item">
+          <div class="details-label">処理フェーズ:</div>
+          <div class="details-value" id="detailPhase">-</div>
+        </div>
+        <div class="details-item">
+          <div class="details-label">経過時間:</div>
+          <div class="details-value" id="detailElapsedTime">-</div>
+        </div>
+        <div class="details-item">
+          <div class="details-label">現在の処理:</div>
+          <div class="details-value" id="detailCurrentProcess">-</div>
+        </div>
+        <div class="details-item">
+          <div class="details-label">処理項目:</div>
+          <div class="details-value" id="detailItems">-</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- ローディングインジケータ -->
+    <div id="loading" class="loading">
+      <div class="loading-spinner"></div>
+      <p class="mt-2">処理中...</p>
+    </div>
+    
+    <!-- メッセージ表示エリア -->
+    <div class="p-4 bg-white rounded-lg shadow">
+      <h2 class="text-lg font-semibold mb-3">メッセージ</h2>
+      <div id="messageArea"></div>
+      <button id="copyButton" onclick="copyMessage()" disabled>メッセージをコピー</button>
+    </div>
+  </div>
+
+  <script>
+  let isProcessing = false;
+  const MAX_MESSAGES = 10; // メッセージ履歴の保持数
+  let messageHistory = [];
+  let progressUpdateInterval = null;
+
+  /**
+   * 保有株リストを更新する
+   */
+  function updatePF() {
+    showLoading();
+    clearMessages();
+    resetProgress();
+    startProgressUpdates();
+    google.script.run
+      .withSuccessHandler(onSuccess)
+      .withFailureHandler(onFailure)
+      .updatePF();
+  }
+
+  /**
+   * トレンド情報を更新する
+   */
+  function updateTrendInfo() {
+    showLoading();
+    clearMessages();
+    resetProgress();
+    startProgressUpdates();
+    google.script.run
+      .withSuccessHandler(onSuccess)
+      .withFailureHandler(onFailure)
+      .updateTrendInfo();
+  }
+
+  /**
+   * _Reference情報を更新する
+   */
+  function updateReferenceInfo() {
+    showLoading();
+    clearMessages();
+    resetProgress();
+    startProgressUpdates();
+    google.script.run
+      .withSuccessHandler(onSuccess)
+      .withFailureHandler(onFailure)
+      .updateReferenceInfo();
+  }
+
+  /**
+   * _Reference情報を分割処理で更新する
+   */
+  function updateReferenceInfoBatched() {
+    showLoading();
+    clearMessages();
+    resetProgress();
+    startProgressUpdates();
+    google.script.run
+      .withSuccessHandler(onSuccess)
+      .withFailureHandler(onFailure)
+      .updateReferenceInfoBatched();
+  }
+
+  /**
+   * 分割処理を継続する
+   */
+  function continueReferenceInfoUpdate() {
+    showLoading();
+    clearMessages();
+    resetProgress();
+    startProgressUpdates();
+    google.script.run
+      .withSuccessHandler(onSuccess)
+      .withFailureHandler(onFailure)
+      .continueReferenceInfoUpdate();
+  }
+
+  /**
+   * 分割処理状態をクリアする
+   */
+  function clearBatchProcessingState() {
+    showLoading();
+    clearMessages();
+    resetProgress();
+    startProgressUpdates();
+    google.script.run
+      .withSuccessHandler(onSuccess)
+      .withFailureHandler(onFailure)
+      .clearBatchProcessingState();
+  }
+
+  /**
+   * 処理をキャンセルする
+   */
+  function cancelProcess() {
+    document.getElementById('progressStatus').textContent = 'キャンセル中...';
+    document.getElementById('phaseBadge').className = 'phase-badge phase-processing';
+    document.getElementById('phaseText').textContent = 'キャンセル処理中';
+    document.getElementById('detailPhase').textContent = 'キャンセル';
+    
+    google.script.run
+      .withSuccessHandler(function(result) {
+        showProgress(100, 100, 'キャンセルされました');
+        stopProgressUpdates();
+        document.getElementById('phaseBadge').className = 'phase-badge phase-complete';
+        document.getElementById('phaseText').textContent = 'キャンセル完了';
+      })
+      .withFailureHandler(function(error) {
+        console.error('キャンセル処理に失敗しました:', error);
+        addMessage('キャンセル処理に失敗しました: ' + error.message);
+        document.getElementById('phaseBadge').className = 'phase-badge phase-error';
+        document.getElementById('phaseText').textContent = 'キャンセル失敗';
+      })
+      .cancelCurrentProcess();
+  }
+
+  /**
+   * 成功時のコールバック
+   */
+  function onSuccess(result) {
+    hideLoading();
+    stopProgressUpdates();
+    addMessage('処理が完了しました: ' + result);
+    
+    // 完了状態を明示的に設定
+    document.getElementById('phaseBadge').className = 'phase-badge phase-complete';
+    document.getElementById('phaseText').textContent = '処理完了';
+    document.getElementById('progressStatus').textContent = '処理完了';
+    document.getElementById('detailPhase').textContent = '完了';
+    document.getElementById('detailCurrentProcess').textContent = '-';
+    
+    // 最終的な進捗状況を取得して表示
+    fetchLatestProgress();
+  }
+
+  /**
+   * 失敗時のコールバック
+   */
+  function onFailure(error) {
+    hideLoading();
+    stopProgressUpdates();
+    addMessage('エラーが発生しました: ' + error.message);
+    document.getElementById('phaseBadge').className = 'phase-badge phase-error';
+    document.getElementById('phaseText').textContent = 'エラー発生';
+    document.getElementById('detailPhase').textContent = 'エラー';
+    document.getElementById('detailCurrentProcess').textContent = error.message;
+  }
+
+  /**
+   * ローディングインジケータを表示
+   */
+  function showLoading() {
+    isProcessing = true;
+    document.getElementById('loading').style.display = 'block';
+  }
+
+  /**
+   * ローディングインジケータを非表示
+   */
+  function hideLoading() {
+    isProcessing = false;
+    document.getElementById('loading').style.display = 'none';
+  }
+
+  /**
+   * メッセージをクリア
+   */
+  function clearMessages() {
+    messageHistory = [];
+    document.getElementById('messageArea').textContent = '';
+    document.getElementById('copyButton').disabled = true;
+  }
+
+  /**
+   * 進捗状況をリセット
+   */
+  function resetProgress() {
+    document.querySelector('.progress').style.width = '0%';
+    document.getElementById('progressText').textContent = '0%';
+    document.getElementById('progressDetails').textContent = '0 / 0 件処理';
+    document.getElementById('progressStatus').textContent = '準備中...';
+    document.getElementById('timeRemaining').textContent = '残り時間: --:--';
+    document.getElementById('phaseBadge').className = 'phase-badge phase-init';
+    document.getElementById('phaseText').textContent = '初期化中';
+    
+    // 詳細情報のリセット
+    document.getElementById('detailPhase').textContent = '初期化';
+    document.getElementById('detailElapsedTime').textContent = '-';
+    document.getElementById('detailCurrentProcess').textContent = '準備中';
+    document.getElementById('detailItems').textContent = '-';
+  }
+
+  /**
+   * 定期的な進捗状況の更新を開始
+   */
+  function startProgressUpdates() {
+    // 既存のインターバルがあれば停止
+    stopProgressUpdates();
+    
+    // 2秒ごとに進捗状況を取得（より頻繁に更新）
+    progressUpdateInterval = setInterval(function() {
+      if (isProcessing) {
+        fetchLatestProgress();
+      } else {
+        stopProgressUpdates();
+      }
+    }, 2000);
+  }
+
+  /**
+   * 定期的な進捗状況の更新を停止
+   */
+  function stopProgressUpdates() {
+    if (progressUpdateInterval) {
+      clearInterval(progressUpdateInterval);
+      progressUpdateInterval = null;
+    }
+  }
+
+  /**
+   * 最新の進捗状況を取得
+   */
+  function fetchLatestProgress() {
+    google.script.run
+      .withSuccessHandler(function(data) {
+        if (data && data.current !== undefined && data.total !== undefined) {
+          updateProgressDisplay(data);
+        }
+      })
+      .withFailureHandler(function(error) {
+        console.error('進捗状況の取得に失敗しました:', error);
+      })
+      .getLatestProgressFromProperties();
+  }
+
+  /**
+   * 進捗表示を更新
+   */
+  function updateProgressDisplay(data) {
+    const percent = Math.round((data.current / data.total) * 100) || 0;
+    document.querySelector('.progress').style.width = percent + '%';
+    document.getElementById('progressText').textContent = percent + '%';
+    document.getElementById('progressDetails').textContent = `${data.current} / ${data.total} 件処理`;
+    
+    if (data.status) {
+      document.getElementById('progressStatus').textContent = data.status;
+    }
+    
+    // 残り時間の表示
+    if (data.details && data.details.estimatedTimeRemaining) {
+      document.getElementById('timeRemaining').textContent = 
+        `残り時間: ${data.details.estimatedTimeRemaining}`;
+    }
+    
+    // フェーズ情報の更新
+    if (data.details && data.details.phase) {
+      const phase = data.details.phase;
+      document.getElementById('detailPhase').textContent = phase;
+      
+      // フェーズに応じたバッジの色を設定
+      let badgeClass = 'phase-badge ';
+      if (phase.includes('完了')) {
+        badgeClass += 'phase-complete';
+        document.getElementById('phaseText').textContent = '処理完了';
+        document.getElementById('progressStatus').textContent = '処理完了';
+      } else if (phase.includes('エラー')) {
+        badgeClass += 'phase-error';
+        document.getElementById('phaseText').textContent = 'エラー発生';
+        document.getElementById('progressStatus').textContent = 'エラー発生';
+      } else if (phase.includes('初期化') || phase.includes('準備')) {
+        badgeClass += 'phase-init';
+        document.getElementById('phaseText').textContent = '初期化中';
+        document.getElementById('progressStatus').textContent = '初期化中';
+      } else {
+        badgeClass += 'phase-processing';
+        document.getElementById('phaseText').textContent = '処理中';
+        document.getElementById('progressStatus').textContent = '処理中';
+      }
+      document.getElementById('phaseBadge').className = badgeClass;
+    }
+    
+    // 経過時間の表示
+    if (data.details && data.details.elapsedTime) {
+      document.getElementById('detailElapsedTime').textContent = data.details.elapsedTime;
+    }
+    
+    // 現在の処理内容の表示
+    let currentProcess = '-';
+    if (data.details) {
+      if (data.details.currentItem) {
+        currentProcess = data.details.currentItem;
+      } else if (data.details.currentBatch && data.details.totalBatches) {
+        currentProcess = `バッチ ${data.details.currentBatch}/${data.details.totalBatches}`;
+      }
+    }
+    document.getElementById('detailCurrentProcess').textContent = currentProcess;
+    
+    // 処理項目の表示
+    let items = '-';
+    if (data.details) {
+      if (data.details.processingItems) {
+        items = data.details.processingItems;
+      } else if (data.details.items) {
+        items = data.details.items;
+      }
+    }
+    document.getElementById('detailItems').textContent = items;
+  }
+
+  /**
+   * メッセージを追加
+   */
+  function addMessage(message) {
+    const messageArea = document.getElementById('messageArea');
+    const timestamp = new Date().toLocaleTimeString('ja-JP', { hour12: false });
+    const formattedMessage = timestamp + '\n' + message;
+    
+    messageHistory.push(formattedMessage);
+    
+    // 最大メッセージ数を超えた場合、古いものから削除
+    if (messageHistory.length > MAX_MESSAGES) {
+      messageHistory.shift();
+    }
+    
+    messageArea.textContent = messageHistory.join('\n\n');
+    messageArea.scrollTop = messageArea.scrollHeight;
+    
+    // メッセージが追加されたらコピーボタンを有効化
+    document.getElementById('copyButton').disabled = false;
+  }
+
+  /**
+   * 進捗状況を表示
+   */
+  function showProgress(current, total, message) {
+    const percent = Math.round((current / total) * 100) || 0;
+    document.querySelector('.progress').style.width = percent + '%';
+    document.getElementById('progressText').textContent = percent + '%';
+    document.getElementById('progressDetails').textContent = `${current} / ${total} 件処理`;
+    
+    if (message) {
+      document.getElementById('progressStatus').textContent = message;
+      addMessage(message);
+    }
+  }
+
+  /**
+   * メッセージをクリップボードにコピー
+   */
+  function copyMessage() {
+    const messageText = messageHistory.join('\n\n');
+    navigator.clipboard.writeText(messageText).then(function() {
+      // コピー成功時の処理
+      const button = document.getElementById('copyButton');
+      const originalText = button.textContent;
+      button.textContent = 'コピーしました！';
+      setTimeout(() => {
+        button.textContent = originalText;
+      }, 2000);
+    }).catch(function(err) {
+      console.error('コピーに失敗しました:', err);
+    });
+  }
+
+  // 初期表示時に最新の進捗状況を取得
+  google.script.run.withSuccessHandler(function(data) {
+    if (data) {
+      updateProgressDisplay(data);
+    }
+  }).getLatestProgressFromProperties();
+  </script>
+</body>
+</html>
