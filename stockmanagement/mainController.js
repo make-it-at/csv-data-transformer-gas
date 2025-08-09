@@ -1717,7 +1717,7 @@ var MainController = {
       let actualStartFromIndex = 0;
       
       // 保存された開始位置がある場合は読み込む（将来の拡張用）
-      const savedStartIndex = scriptProperties.getProperty('nextStartIndex_Reference_Reference');
+      const savedStartIndex = scriptProperties.getProperty('nextStartIndex_Reference');
       if (savedStartIndex) {
         actualStartFromIndex = parseInt(savedStartIndex);
         LoggerManager.info(`_Reference継続処理開始位置: ${actualStartFromIndex}番目から`);

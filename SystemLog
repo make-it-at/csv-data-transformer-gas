@@ -578,3 +578,813 @@ Timestamp	Level	Message	Data	User
 2025/08/09 13:27:32	WARN	安全マージンのため処理を中断しました（24/119件完了）。次回は24番目から再開します。		kmakita1201@gmail.com
 2025/08/09 13:27:33	DEBUG	実行タイマーをクリア		kmakita1201@gmail.com
 2025/08/09 13:27:34	INFO	タイムアウト管理: クリーンアップ完了		kmakita1201@gmail.com
+2025/08/09 13:30:29	DEBUG	統合メニューを作成しました		kmakita1201@gmail.com
+2025/08/09 13:36:38	DEBUG	統合メニューを作成しました		kmakita1201@gmail.com
+2025/08/09 13:39:07	INFO	分割処理による_Reference情報更新を開始します		kmakita1201@gmail.com
+2025/08/09 13:39:08	ERROR	_Reference情報更新中にエラーが発生しました:	{}	kmakita1201@gmail.com
+2025/08/09 13:49:21	DEBUG	統合メニューを作成しました		kmakita1201@gmail.com
+2025/08/09 13:49:31	INFO	分割処理による_Reference情報更新を開始します		kmakita1201@gmail.com
+2025/08/09 13:49:32	INFO	タイムアウト管理: 実行タイマーを開始しました		kmakita1201@gmail.com
+2025/08/09 13:49:33	INFO	_Referenceシートのヘッダー: コード, 銘柄名, 市場, 業種, 配当金, 分配金, EPS(予想), BPS, 権利確定, 配当金/分配金, みん株, 株探, Y!Finance, バフェット・コード, 株予報Pro		kmakita1201@gmail.com
+2025/08/09 13:49:35	DEBUG	設定データを取得しました	{"rowCount":17,"sampleRow":["コード","","","",""]}	kmakita1201@gmail.com
+2025/08/09 13:49:35	INFO	_Reference用更新項目を取得しました	{"dailyCount":6,"quarterlyCount":6,"totalCount":12,"dailyItems":"前日終値, 目標株価, 株価診断, 個人予想, アナリスト評価, シグナル","quarterlyItems":"権利確定, 分配金, 配当金, US配当金, EPS(予想), BPS"}	kmakita1201@gmail.com
+2025/08/09 13:49:36	DEBUG	設定項目 1	{"keyword":"前日終値","regex":"<th class=\"ly_vamd_inner ly_colsize_3_fix tal wsnw\">前日終値(?:<span[^>]*>[^<]*<\\/span>)?<\\/th>\\s*<td class=\"ly_vamd_inner ly_colsize_9_fix fwb tar wsnw\">([\\d,\\.]+)円<\\/td>","tag":"tr","url":"https://minkabu.jp/stock/{code}","frequency":"毎日"}	kmakita1201@gmail.com
+2025/08/09 13:49:37	DEBUG	設定項目 2	{"keyword":"目標株価","regex":"<div class=\"md_target_box_price\">([\\d,]+)<span class=\"decimal\">円<\\/span><\\/div>","tag":"div","url":"https://minkabu.jp/stock/{code}/analysis","frequency":"毎日"}	kmakita1201@gmail.com
+2025/08/09 13:49:38	DEBUG	設定項目 3	{"keyword":"株価診断","regex":"<div\\s+class=\"flex items-end justify-end gap-1 text-2xl font-bold text-shadow\">\\s*<span>([\\d,]+)<\\/span><span\\s+class=\"text-xs leading-5\">円<\\/span>\\s*<\\/div>","tag":"div","url":"https://minkabu.jp/stock/{code}/research","frequency":"毎日"}	kmakita1201@gmail.com
+2025/08/09 13:49:38	DEBUG	設定項目 4	{"keyword":"個人予想","regex":"<div\\s+class=\"flex items-end gap-2\">\\s*<span\\s+class=\"text-3xl font-bold\">([\\d,]+)<\\/span>\\s*<span\\s+class=\"font-bold\">円<\\/span>\\s*<\\/div>","tag":"div","url":"https://minkabu.jp/stock/{code}/pick","frequency":"毎日"}	kmakita1201@gmail.com
+2025/08/09 13:49:39	DEBUG	設定項目 5	{"keyword":"アナリスト評価","regex":"<div\\s+class=\"fwb\"><span\\s+class=\"fsxxl\">([\\d,]+)<\\/span>&nbsp;円<\\/div>","tag":"div","url":"https://minkabu.jp/stock/{code}/analyst_consensus","frequency":"毎日"}	kmakita1201@gmail.com
+2025/08/09 13:49:40	DEBUG	設定項目 6	{"keyword":"シグナル","regex":"<p><strong>シグナル<\\/strong><\\/p>\\s*<p class=\".*?\">(.*?)<\\/p>","tag":"p","url":"https://kabuyoho.jp/reportTop?bcode={code}","frequency":"毎日"}	kmakita1201@gmail.com
+2025/08/09 13:49:40	DEBUG	設定項目 7	{"keyword":"権利確定","regex":"<th class=\"ph5 pl10\">配当権利確定月<\\/th>\\s*<td class=\"ph5 pl10 fwb\">(.*?)<\\/td>","tag":"tr","url":"https://minkabu.jp/stock/{code}/dividend","frequency":"決算ごと"}	kmakita1201@gmail.com
+2025/08/09 13:49:41	DEBUG	設定項目 8	{"keyword":"分配金","regex":"<span[^>]*DataListItem__name[^>]*>予想分配金<\\/span>[\\s\\S]*?<span[^>]*StyledNumber__value[^>]*>([\\d,\\.]+)<\\/span>","tag":"span","url":"https://finance.yahoo.co.jp/quote/{code}.T","frequency":"決算ごと"}	kmakita1201@gmail.com
+2025/08/09 13:49:41	DEBUG	設定項目 9	{"keyword":"配当金","regex":"<span class=\"dividend-state__amount__integer\">(\\d+)\\.<\\/span><span class=\"dividend-state__amount__decimal\">(\\d+)<\\/span><span class=\"dividend-state__amount__yen\">円<\\/span>","tag":"span","url":"https://minkabu.jp/stock/{code}/dividend","frequency":"決算ごと"}	kmakita1201@gmail.com
+2025/08/09 13:49:42	DEBUG	設定項目 10	{"keyword":"US配当金","regex":"<td class=\"snapshot-td2 cursor-pointer w-\\[7%\\]\"[^>]*>Dividend TTM<\\/td><td[^>]*><b>(\\d+\\.\\d+)\\s","tag":"td","url":"https://finviz.com/quote.ashx?t={code}&p=d","frequency":"決算ごと"}	kmakita1201@gmail.com
+2025/08/09 13:49:43	DEBUG	設定項目 11	{"keyword":"EPS(予想)","regex":"<th>\\s*<span>EPS\\(予想\\)<\\/span>\\s*<\\/th>\\s*<td[^>]*>\\s*<p[^>]*>([\\d,.]+)(?:&nbsp;|\\s)?円<\\/p>","tag":"span","url":"https://kabuyoho.jp/reportTarget?bcode={code}","frequency":"決算ごと"}	kmakita1201@gmail.com
+2025/08/09 13:49:44	DEBUG	設定項目 12	{"keyword":"BPS","regex":"<th>\\s*<span>BPS\\(実績\\)<\\/span>\\s*<\\/th>\\s*<td[^>]*>\\s*<p[^>]*>([\\d,]+)(?:&nbsp;|\\s)?円<\\/p>","tag":"span","url":"https://kabuyoho.jp/reportTarget?bcode={code}","frequency":"決算ごと"}	kmakita1201@gmail.com
+2025/08/09 13:49:44	INFO	_Referenceシート処理対象: 119件		kmakita1201@gmail.com
+2025/08/09 13:49:46	INFO	進捗状況: 0% (0/119) - 処理を開始します...		kmakita1201@gmail.com
+2025/08/09 13:49:47	INFO	進捗状況: 0% (0/119) - バッチ 1/30 を処理中...		kmakita1201@gmail.com
+2025/08/09 13:49:48	INFO	進捗状況: 0% (0/119) - 権利確定情報を更新中...		kmakita1201@gmail.com
+2025/08/09 13:49:49	DEBUG	権利確定の生の取得値: コード=1605, 値="6月, 12月"		kmakita1201@gmail.com
+2025/08/09 13:49:51	DEBUG	権利確定の生の取得値: コード=1723, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 13:49:52	DEBUG	権利確定の生の取得値: コード=1911, 値="6月, 12月"		kmakita1201@gmail.com
+2025/08/09 13:49:55	DEBUG	権利確定の生の取得値: コード=1928, 値="1月, 7月"		kmakita1201@gmail.com
+2025/08/09 13:49:55	INFO	進捗状況: 0% (0/119) - 権利確定情報を更新中... (4件)		kmakita1201@gmail.com
+2025/08/09 13:49:56	DEBUG	Attempting to update 権利確定 data	{"batchStart":0,"colIndex":9,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:49:57	INFO	進捗状況: 0% (0/119) - 分配金情報を更新中...		kmakita1201@gmail.com
+2025/08/09 13:49:59	DEBUG	分配金の正規表現マッチ失敗: コード=1605, URL=https://finance.yahoo.co.jp/quote/1605.T		kmakita1201@gmail.com
+2025/08/09 13:49:59	DEBUG	分配金の正規表現マッチ失敗: コード=1605, URL=https://finance.yahoo.co.jp/quote/1605.T		kmakita1201@gmail.com
+2025/08/09 13:50:01	DEBUG	分配金の正規表現マッチ失敗: コード=1723, URL=https://finance.yahoo.co.jp/quote/1723.T		kmakita1201@gmail.com
+2025/08/09 13:50:02	DEBUG	分配金の正規表現マッチ失敗: コード=1723, URL=https://finance.yahoo.co.jp/quote/1723.T		kmakita1201@gmail.com
+2025/08/09 13:50:04	DEBUG	分配金の正規表現マッチ失敗: コード=1911, URL=https://finance.yahoo.co.jp/quote/1911.T		kmakita1201@gmail.com
+2025/08/09 13:50:05	DEBUG	分配金の正規表現マッチ失敗: コード=1911, URL=https://finance.yahoo.co.jp/quote/1911.T		kmakita1201@gmail.com
+2025/08/09 13:50:06	DEBUG	分配金の正規表現マッチ失敗: コード=1928, URL=https://finance.yahoo.co.jp/quote/1928.T		kmakita1201@gmail.com
+2025/08/09 13:50:07	DEBUG	分配金の正規表現マッチ失敗: コード=1928, URL=https://finance.yahoo.co.jp/quote/1928.T		kmakita1201@gmail.com
+2025/08/09 13:50:09	INFO	進捗状況: 0% (0/119) - 分配金情報を更新中... (4件)		kmakita1201@gmail.com
+2025/08/09 13:50:10	DEBUG	Attempting to update 分配金 data	{"batchStart":0,"colIndex":6,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:50:11	INFO	進捗状況: 0% (0/119) - 配当金情報を更新中...		kmakita1201@gmail.com
+2025/08/09 13:50:12	DEBUG	配当金の生の取得値: コード=1605, 値="100"		kmakita1201@gmail.com
+2025/08/09 13:50:13	DEBUG	配当金の処理後の値: コード=1605, 元の値="100", 処理後="100"		kmakita1201@gmail.com
+2025/08/09 13:50:15	DEBUG	配当金の生の取得値: コード=1723, 値="132"		kmakita1201@gmail.com
+2025/08/09 13:50:15	DEBUG	配当金の処理後の値: コード=1723, 元の値="132", 処理後="132"		kmakita1201@gmail.com
+2025/08/09 13:50:17	DEBUG	配当金の生の取得値: コード=1911, 値="50"		kmakita1201@gmail.com
+2025/08/09 13:50:17	DEBUG	配当金の処理後の値: コード=1911, 元の値="50", 処理後="50"		kmakita1201@gmail.com
+2025/08/09 13:50:19	DEBUG	配当金の生の取得値: コード=1928, 値="144"		kmakita1201@gmail.com
+2025/08/09 13:50:19	DEBUG	配当金の処理後の値: コード=1928, 元の値="144", 処理後="144"		kmakita1201@gmail.com
+2025/08/09 13:50:20	INFO	進捗状況: 0% (0/119) - 配当金情報を更新中... (4件)		kmakita1201@gmail.com
+2025/08/09 13:50:21	DEBUG	Attempting to update 配当金 data	{"batchStart":0,"colIndex":5,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:50:22	INFO	進捗状況: 0% (0/119) - EPS(予想)情報を更新中...		kmakita1201@gmail.com
+2025/08/09 13:50:24	DEBUG	EPS(予想)の生の取得値: コード=1605, 値="309.0"		kmakita1201@gmail.com
+2025/08/09 13:50:26	DEBUG	EPS(予想)の生の取得値: コード=1723, 値="405.0"		kmakita1201@gmail.com
+2025/08/09 13:50:27	DEBUG	EPS(予想)の生の取得値: コード=1911, 値="156.5"		kmakita1201@gmail.com
+2025/08/09 13:50:28	DEBUG	EPS(予想)の生の取得値: コード=1928, 値="358.0"		kmakita1201@gmail.com
+2025/08/09 13:50:29	INFO	進捗状況: 0% (0/119) - EPS(予想)情報を更新中... (4件)		kmakita1201@gmail.com
+2025/08/09 13:50:30	DEBUG	Attempting to update EPS(予想) data	{"batchStart":0,"colIndex":7,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:50:31	INFO	進捗状況: 0% (0/119) - BPS情報を更新中...		kmakita1201@gmail.com
+2025/08/09 13:50:32	DEBUG	BPSの生の取得値: コード=1605, 値="3,830"		kmakita1201@gmail.com
+2025/08/09 13:50:34	DEBUG	BPSの生の取得値: コード=1723, 値="2,495"		kmakita1201@gmail.com
+2025/08/09 13:50:35	DEBUG	BPSの生の取得値: コード=1911, 値="1,436"		kmakita1201@gmail.com
+2025/08/09 13:50:36	DEBUG	BPSの生の取得値: コード=1928, 値="2,906"		kmakita1201@gmail.com
+2025/08/09 13:50:37	INFO	進捗状況: 0% (0/119) - BPS情報を更新中... (4件)		kmakita1201@gmail.com
+2025/08/09 13:50:37	DEBUG	Attempting to update BPS data	{"batchStart":0,"colIndex":8,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:50:41	DEBUG	権利確定の生の取得値: コード=1939, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 13:50:42	DEBUG	権利確定の生の取得値: コード=1951, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 13:50:45	DEBUG	権利確定の生の取得値: コード=1963, 値="3月"		kmakita1201@gmail.com
+2025/08/09 13:50:47	DEBUG	権利確定の生の取得値: コード=2003, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 13:50:48	DEBUG	Attempting to update 権利確定 data	{"batchStart":4,"colIndex":9,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:50:50	DEBUG	分配金の正規表現マッチ失敗: コード=1939, URL=https://finance.yahoo.co.jp/quote/1939.T		kmakita1201@gmail.com
+2025/08/09 13:50:51	DEBUG	分配金の正規表現マッチ失敗: コード=1939, URL=https://finance.yahoo.co.jp/quote/1939.T		kmakita1201@gmail.com
+2025/08/09 13:50:52	DEBUG	分配金の正規表現マッチ失敗: コード=1951, URL=https://finance.yahoo.co.jp/quote/1951.T		kmakita1201@gmail.com
+2025/08/09 13:50:54	DEBUG	分配金の正規表現マッチ失敗: コード=1951, URL=https://finance.yahoo.co.jp/quote/1951.T		kmakita1201@gmail.com
+2025/08/09 13:50:55	DEBUG	分配金の正規表現マッチ失敗: コード=1963, URL=https://finance.yahoo.co.jp/quote/1963.T		kmakita1201@gmail.com
+2025/08/09 13:50:57	DEBUG	分配金の正規表現マッチ失敗: コード=1963, URL=https://finance.yahoo.co.jp/quote/1963.T		kmakita1201@gmail.com
+2025/08/09 13:50:58	DEBUG	分配金の正規表現マッチ失敗: コード=2003, URL=https://finance.yahoo.co.jp/quote/2003.T		kmakita1201@gmail.com
+2025/08/09 13:50:59	DEBUG	分配金の正規表現マッチ失敗: コード=2003, URL=https://finance.yahoo.co.jp/quote/2003.T		kmakita1201@gmail.com
+2025/08/09 13:51:00	DEBUG	Attempting to update 分配金 data	{"batchStart":4,"colIndex":6,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:51:02	DEBUG	配当金の生の取得値: コード=1939, 値="65"		kmakita1201@gmail.com
+2025/08/09 13:51:02	DEBUG	配当金の処理後の値: コード=1939, 元の値="65", 処理後="65"		kmakita1201@gmail.com
+2025/08/09 13:51:03	DEBUG	配当金の生の取得値: コード=1951, 値="66"		kmakita1201@gmail.com
+2025/08/09 13:51:04	DEBUG	配当金の処理後の値: コード=1951, 元の値="66", 処理後="66"		kmakita1201@gmail.com
+2025/08/09 13:51:05	DEBUG	配当金の生の取得値: コード=1963, 値="40"		kmakita1201@gmail.com
+2025/08/09 13:51:06	DEBUG	配当金の処理後の値: コード=1963, 元の値="40", 処理後="40"		kmakita1201@gmail.com
+2025/08/09 13:51:08	DEBUG	配当金の生の取得値: コード=2003, 値="280"		kmakita1201@gmail.com
+2025/08/09 13:51:08	DEBUG	配当金の処理後の値: コード=2003, 元の値="280", 処理後="280"		kmakita1201@gmail.com
+2025/08/09 13:51:09	DEBUG	Attempting to update 配当金 data	{"batchStart":4,"colIndex":5,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:51:12	DEBUG	EPS(予想)の生の取得値: コード=1939, 値="105.8"		kmakita1201@gmail.com
+2025/08/09 13:51:14	DEBUG	EPS(予想)の生の取得値: コード=1951, 値="145.5"		kmakita1201@gmail.com
+2025/08/09 13:51:15	DEBUG	EPS(予想)の生の取得値: コード=1963, 値="62.1"		kmakita1201@gmail.com
+2025/08/09 13:51:17	DEBUG	EPS(予想)の生の取得値: コード=2003, 値="461.3"		kmakita1201@gmail.com
+2025/08/09 13:51:18	DEBUG	Attempting to update EPS(予想) data	{"batchStart":4,"colIndex":7,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:51:19	DEBUG	BPSの生の取得値: コード=1939, 値="1,359"		kmakita1201@gmail.com
+2025/08/09 13:51:21	DEBUG	BPSの生の取得値: コード=1951, 値="1,530"		kmakita1201@gmail.com
+2025/08/09 13:51:22	DEBUG	BPSの生の取得値: コード=1963, 値="1,571"		kmakita1201@gmail.com
+2025/08/09 13:51:23	DEBUG	BPSの生の取得値: コード=2003, 値="5,372"		kmakita1201@gmail.com
+2025/08/09 13:51:24	DEBUG	Attempting to update BPS data	{"batchStart":4,"colIndex":8,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:51:29	DEBUG	権利確定の生の取得値: コード=208A, 値="6月"		kmakita1201@gmail.com
+2025/08/09 13:51:31	DEBUG	権利確定の生の取得値: コード=2169, 値="6月, 12月"		kmakita1201@gmail.com
+2025/08/09 13:51:32	DEBUG	権利確定の生の取得値: コード=2296, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 13:51:33	DEBUG	権利確定の生の取得値: コード=2393, 値="3月"		kmakita1201@gmail.com
+2025/08/09 13:51:35	DEBUG	Attempting to update 権利確定 data	{"batchStart":8,"colIndex":9,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:51:36	DEBUG	分配金の正規表現マッチ失敗: コード=208A, URL=https://finance.yahoo.co.jp/quote/208A.T		kmakita1201@gmail.com
+2025/08/09 13:51:38	DEBUG	分配金の正規表現マッチ失敗: コード=208A, URL=https://finance.yahoo.co.jp/quote/208A.T		kmakita1201@gmail.com
+2025/08/09 13:51:39	DEBUG	分配金の正規表現マッチ失敗: コード=2169, URL=https://finance.yahoo.co.jp/quote/2169.T		kmakita1201@gmail.com
+2025/08/09 13:51:40	DEBUG	分配金の正規表現マッチ失敗: コード=2169, URL=https://finance.yahoo.co.jp/quote/2169.T		kmakita1201@gmail.com
+2025/08/09 13:51:42	DEBUG	分配金の正規表現マッチ失敗: コード=2296, URL=https://finance.yahoo.co.jp/quote/2296.T		kmakita1201@gmail.com
+2025/08/09 13:51:44	DEBUG	分配金の正規表現マッチ失敗: コード=2296, URL=https://finance.yahoo.co.jp/quote/2296.T		kmakita1201@gmail.com
+2025/08/09 13:51:44	DEBUG	分配金の正規表現マッチ失敗: コード=2393, URL=https://finance.yahoo.co.jp/quote/2393.T		kmakita1201@gmail.com
+2025/08/09 13:51:45	DEBUG	分配金の正規表現マッチ失敗: コード=2393, URL=https://finance.yahoo.co.jp/quote/2393.T		kmakita1201@gmail.com
+2025/08/09 13:51:47	DEBUG	Attempting to update 分配金 data	{"batchStart":8,"colIndex":6,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:51:48	DEBUG	配当金の生の取得値: コード=208A, 値="80"		kmakita1201@gmail.com
+2025/08/09 13:51:49	DEBUG	配当金の処理後の値: コード=208A, 元の値="80", 処理後="80"		kmakita1201@gmail.com
+2025/08/09 13:51:50	DEBUG	配当金の生の取得値: コード=2169, 値="74"		kmakita1201@gmail.com
+2025/08/09 13:51:50	DEBUG	配当金の処理後の値: コード=2169, 元の値="74", 処理後="74"		kmakita1201@gmail.com
+2025/08/09 13:51:51	DEBUG	配当金の生の取得値: コード=2296, 値="320"		kmakita1201@gmail.com
+2025/08/09 13:51:52	DEBUG	配当金の処理後の値: コード=2296, 元の値="320", 処理後="320"		kmakita1201@gmail.com
+2025/08/09 13:51:53	DEBUG	配当金の生の取得値: コード=2393, 値="72"		kmakita1201@gmail.com
+2025/08/09 13:51:54	DEBUG	配当金の処理後の値: コード=2393, 元の値="72", 処理後="72"		kmakita1201@gmail.com
+2025/08/09 13:51:55	DEBUG	Attempting to update 配当金 data	{"batchStart":8,"colIndex":5,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:51:57	DEBUG	EPS(予想)の生の取得値: コード=208A, 値="183.3"		kmakita1201@gmail.com
+2025/08/09 13:51:58	DEBUG	EPS(予想)の生の取得値: コード=2169, 値="92.1"		kmakita1201@gmail.com
+2025/08/09 13:52:00	DEBUG	EPS(予想)の生の取得値: コード=2296, 値="308.5"		kmakita1201@gmail.com
+2025/08/09 13:52:01	DEBUG	EPS(予想)の生の取得値: コード=2393, 値="122.3"		kmakita1201@gmail.com
+2025/08/09 13:52:02	DEBUG	Attempting to update EPS(予想) data	{"batchStart":8,"colIndex":7,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:52:04	DEBUG	BPSの生の取得値: コード=208A, 値="820"		kmakita1201@gmail.com
+2025/08/09 13:52:06	DEBUG	BPSの生の取得値: コード=2169, 値="1,309"		kmakita1201@gmail.com
+2025/08/09 13:52:07	DEBUG	BPSの生の取得値: コード=2296, 値="5,072"		kmakita1201@gmail.com
+2025/08/09 13:52:08	DEBUG	BPSの生の取得値: コード=2393, 値="1,082"		kmakita1201@gmail.com
+2025/08/09 13:52:10	DEBUG	Attempting to update BPS data	{"batchStart":8,"colIndex":8,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:52:13	DEBUG	権利確定の生の取得値: コード=2768, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 13:52:15	DEBUG	権利確定の生の取得値: コード=2914, 値="6月, 12月"		kmakita1201@gmail.com
+2025/08/09 13:52:16	DEBUG	権利確定の生の取得値: コード=3003, 値="6月, 12月"		kmakita1201@gmail.com
+2025/08/09 13:52:17	DEBUG	権利確定の生の取得値: コード=3050, 値="2月, 8月"		kmakita1201@gmail.com
+2025/08/09 13:52:18	DEBUG	Attempting to update 権利確定 data	{"batchStart":12,"colIndex":9,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:52:20	DEBUG	分配金の正規表現マッチ失敗: コード=2768, URL=https://finance.yahoo.co.jp/quote/2768.T		kmakita1201@gmail.com
+2025/08/09 13:52:21	DEBUG	分配金の正規表現マッチ失敗: コード=2768, URL=https://finance.yahoo.co.jp/quote/2768.T		kmakita1201@gmail.com
+2025/08/09 13:52:22	DEBUG	分配金の正規表現マッチ失敗: コード=2914, URL=https://finance.yahoo.co.jp/quote/2914.T		kmakita1201@gmail.com
+2025/08/09 13:52:24	DEBUG	分配金の正規表現マッチ失敗: コード=2914, URL=https://finance.yahoo.co.jp/quote/2914.T		kmakita1201@gmail.com
+2025/08/09 13:52:25	DEBUG	分配金の正規表現マッチ失敗: コード=3003, URL=https://finance.yahoo.co.jp/quote/3003.T		kmakita1201@gmail.com
+2025/08/09 13:52:25	DEBUG	分配金の正規表現マッチ失敗: コード=3003, URL=https://finance.yahoo.co.jp/quote/3003.T		kmakita1201@gmail.com
+2025/08/09 13:52:27	DEBUG	分配金の正規表現マッチ失敗: コード=3050, URL=https://finance.yahoo.co.jp/quote/3050.T		kmakita1201@gmail.com
+2025/08/09 13:52:28	DEBUG	分配金の正規表現マッチ失敗: コード=3050, URL=https://finance.yahoo.co.jp/quote/3050.T		kmakita1201@gmail.com
+2025/08/09 13:52:29	DEBUG	Attempting to update 分配金 data	{"batchStart":12,"colIndex":6,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:52:30	DEBUG	配当金の生の取得値: コード=2768, 値="165"		kmakita1201@gmail.com
+2025/08/09 13:52:31	DEBUG	配当金の処理後の値: コード=2768, 元の値="165", 処理後="165"		kmakita1201@gmail.com
+2025/08/09 13:52:32	DEBUG	配当金の生の取得値: コード=2914, 値="208"		kmakita1201@gmail.com
+2025/08/09 13:52:32	DEBUG	配当金の処理後の値: コード=2914, 元の値="208", 処理後="208"		kmakita1201@gmail.com
+2025/08/09 13:52:33	DEBUG	配当金の生の取得値: コード=3003, 値="57"		kmakita1201@gmail.com
+2025/08/09 13:52:34	DEBUG	配当金の処理後の値: コード=3003, 元の値="57", 処理後="57"		kmakita1201@gmail.com
+2025/08/09 13:52:35	DEBUG	配当金の生の取得値: コード=3050, 値="46"		kmakita1201@gmail.com
+2025/08/09 13:52:35	DEBUG	配当金の処理後の値: コード=3050, 元の値="46", 処理後="46"		kmakita1201@gmail.com
+2025/08/09 13:52:36	DEBUG	Attempting to update 配当金 data	{"batchStart":12,"colIndex":5,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:52:38	DEBUG	EPS(予想)の生の取得値: コード=2768, 値="547.2"		kmakita1201@gmail.com
+2025/08/09 13:52:40	DEBUG	EPS(予想)の生の取得値: コード=2914, 値="278.2"		kmakita1201@gmail.com
+2025/08/09 13:52:41	DEBUG	EPS(予想)の生の取得値: コード=3003, 値="142.1"		kmakita1201@gmail.com
+2025/08/09 13:52:43	DEBUG	EPS(予想)の生の取得値: コード=3050, 値="146.3"		kmakita1201@gmail.com
+2025/08/09 13:52:43	DEBUG	Attempting to update EPS(予想) data	{"batchStart":12,"colIndex":7,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:52:45	DEBUG	BPSの生の取得値: コード=2768, 値="4,508"		kmakita1201@gmail.com
+2025/08/09 13:52:47	DEBUG	BPSの生の取得値: コード=2914, 値="2,287"		kmakita1201@gmail.com
+2025/08/09 13:52:48	DEBUG	BPSの生の取得値: コード=3003, 値="1,117"		kmakita1201@gmail.com
+2025/08/09 13:52:49	DEBUG	BPSの生の取得値: コード=3050, 値="2,020"		kmakita1201@gmail.com
+2025/08/09 13:52:50	DEBUG	Attempting to update BPS data	{"batchStart":12,"colIndex":8,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:52:54	DEBUG	権利確定の生の取得値: コード=3076, 値="6月, 12月"		kmakita1201@gmail.com
+2025/08/09 13:52:55	DEBUG	権利確定の生の取得値: コード=3231, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 13:52:55	DEBUG	権利確定の正規表現マッチ失敗: コード=3269, URL=https://minkabu.jp/stock/3269/dividend		kmakita1201@gmail.com
+2025/08/09 13:52:56	DEBUG	権利確定の正規表現マッチ失敗: コード=3269, URL=https://minkabu.jp/stock/3269/dividend		kmakita1201@gmail.com
+2025/08/09 13:52:57	DEBUG	権利確定の生の取得値: コード=3407, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 13:52:58	DEBUG	Attempting to update 権利確定 data	{"batchStart":16,"colIndex":9,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:53:00	DEBUG	分配金の正規表現マッチ失敗: コード=3076, URL=https://finance.yahoo.co.jp/quote/3076.T		kmakita1201@gmail.com
+2025/08/09 13:53:01	DEBUG	分配金の正規表現マッチ失敗: コード=3076, URL=https://finance.yahoo.co.jp/quote/3076.T		kmakita1201@gmail.com
+2025/08/09 13:53:02	DEBUG	分配金の正規表現マッチ失敗: コード=3231, URL=https://finance.yahoo.co.jp/quote/3231.T		kmakita1201@gmail.com
+2025/08/09 13:53:03	DEBUG	分配金の正規表現マッチ失敗: コード=3231, URL=https://finance.yahoo.co.jp/quote/3231.T		kmakita1201@gmail.com
+2025/08/09 13:53:05	DEBUG	分配金の生の取得値: コード=3269, 値="6,310.00"		kmakita1201@gmail.com
+2025/08/09 13:53:07	DEBUG	分配金の正規表現マッチ失敗: コード=3407, URL=https://finance.yahoo.co.jp/quote/3407.T		kmakita1201@gmail.com
+2025/08/09 13:53:08	DEBUG	分配金の正規表現マッチ失敗: コード=3407, URL=https://finance.yahoo.co.jp/quote/3407.T		kmakita1201@gmail.com
+2025/08/09 13:53:09	DEBUG	Attempting to update 分配金 data	{"batchStart":16,"colIndex":6,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:53:11	DEBUG	配当金の生の取得値: コード=3076, 値="100"		kmakita1201@gmail.com
+2025/08/09 13:53:11	DEBUG	配当金の処理後の値: コード=3076, 元の値="100", 処理後="100"		kmakita1201@gmail.com
+2025/08/09 13:53:13	DEBUG	配当金の生の取得値: コード=3231, 値="36"		kmakita1201@gmail.com
+2025/08/09 13:53:14	DEBUG	配当金の処理後の値: コード=3231, 元の値="36", 処理後="36"		kmakita1201@gmail.com
+2025/08/09 13:53:15	DEBUG	配当金の正規表現マッチ失敗: コード=3269, URL=https://minkabu.jp/stock/3269/dividend		kmakita1201@gmail.com
+2025/08/09 13:53:15	DEBUG	"配当金のHTML内容(最初の500文字): <!DOCTYPE html>
+<html prefix=""og: https://ogp.me/ns#"" class=""mk_layout"" lang=""ja"">
+<head>
+  <meta charset=""UTF-8"">
+<title>みんかぶ - 資産形成のための情報メディア</title>
+<link href=""https://assets.minkabu.jp/stylesheets/notosansjapanese.css"" rel=""stylesheet"" />
+<meta content=""みんかぶ - 資産形成のための情報メディア"" name=""description"" />
+<meta content=""みんなの株式,みんなの株,みんかぶ,株価予想,minkabu,みんなのかぶしき,みん株,株,株式,銘柄,株情報,株式投資,投資情報"" name=""keywords"" />
+
+<link rel=""shortcut icon"" href=""https://minkabu.jp/favicon.ico"" />
+<link rel=""help"" href=""http"		kmakita1201@gmail.com
+2025/08/09 13:53:16	DEBUG	配当金の正規表現: /<span class="dividend-state__amount__integer">(\d+)\.<\/span><span class="dividend-state__amount__decimal">(\d+)<\/span><span class="dividend-state__amount__yen">円<\/span>/s		kmakita1201@gmail.com
+2025/08/09 13:53:17	DEBUG	配当金の正規表現マッチ失敗: コード=3269, URL=https://minkabu.jp/stock/3269/dividend		kmakita1201@gmail.com
+2025/08/09 13:53:18	DEBUG	"配当金のHTML内容(最初の500文字): <!DOCTYPE html>
+<html prefix=""og: https://ogp.me/ns#"" class=""mk_layout"" lang=""ja"">
+<head>
+  <meta charset=""UTF-8"">
+<title>みんかぶ - 資産形成のための情報メディア</title>
+<link href=""https://assets.minkabu.jp/stylesheets/notosansjapanese.css"" rel=""stylesheet"" />
+<meta content=""みんかぶ - 資産形成のための情報メディア"" name=""description"" />
+<meta content=""みんなの株式,みんなの株,みんかぶ,株価予想,minkabu,みんなのかぶしき,みん株,株,株式,銘柄,株情報,株式投資,投資情報"" name=""keywords"" />
+
+<link rel=""shortcut icon"" href=""https://minkabu.jp/favicon.ico"" />
+<link rel=""help"" href=""http"		kmakita1201@gmail.com
+2025/08/09 13:53:18	DEBUG	配当金の正規表現: /<span class="dividend-state__amount__integer">(\d+)\.<\/span><span class="dividend-state__amount__decimal">(\d+)<\/span><span class="dividend-state__amount__yen">円<\/span>/s		kmakita1201@gmail.com
+2025/08/09 13:53:19	DEBUG	配当金の生の取得値: コード=3407, 値="40"		kmakita1201@gmail.com
+2025/08/09 13:53:20	DEBUG	配当金の処理後の値: コード=3407, 元の値="40", 処理後="40"		kmakita1201@gmail.com
+2025/08/09 13:53:21	DEBUG	Attempting to update 配当金 data	{"batchStart":16,"colIndex":5,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:53:23	DEBUG	EPS(予想)の生の取得値: コード=3076, 値="410.2"		kmakita1201@gmail.com
+2025/08/09 13:53:24	DEBUG	EPS(予想)の生の取得値: コード=3231, 値="87.3"		kmakita1201@gmail.com
+2025/08/09 13:53:26	DEBUG	EPS(予想)の正規表現マッチ失敗: コード=3269, URL=https://kabuyoho.jp/reportTarget?bcode=3269		kmakita1201@gmail.com
+2025/08/09 13:53:27	DEBUG	EPS(予想)の正規表現マッチ失敗: コード=3269, URL=https://kabuyoho.jp/reportTarget?bcode=3269		kmakita1201@gmail.com
+2025/08/09 13:53:28	DEBUG	EPS(予想)の生の取得値: コード=3407, 値="92.0"		kmakita1201@gmail.com
+2025/08/09 13:53:29	DEBUG	Attempting to update EPS(予想) data	{"batchStart":16,"colIndex":7,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:53:31	DEBUG	BPSの生の取得値: コード=3076, 値="1,986"		kmakita1201@gmail.com
+2025/08/09 13:53:32	DEBUG	BPSの生の取得値: コード=3231, 値="870"		kmakita1201@gmail.com
+2025/08/09 13:53:33	DEBUG	BPSの正規表現マッチ失敗: コード=3269, URL=https://kabuyoho.jp/reportTarget?bcode=3269		kmakita1201@gmail.com
+2025/08/09 13:53:35	DEBUG	BPSの正規表現マッチ失敗: コード=3269, URL=https://kabuyoho.jp/reportTarget?bcode=3269		kmakita1201@gmail.com
+2025/08/09 13:53:36	DEBUG	BPSの生の取得値: コード=3407, 値="1,342"		kmakita1201@gmail.com
+2025/08/09 13:53:37	DEBUG	Attempting to update BPS data	{"batchStart":16,"colIndex":8,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:53:41	DEBUG	権利確定の生の取得値: コード=3597, 値="6月"		kmakita1201@gmail.com
+2025/08/09 13:53:42	DEBUG	権利確定の生の取得値: コード=3817, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 13:53:43	DEBUG	権利確定の生の取得値: コード=3834, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 13:53:44	DEBUG	権利確定の生の取得値: コード=4008, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 13:53:45	DEBUG	Attempting to update 権利確定 data	{"batchStart":20,"colIndex":9,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:53:47	DEBUG	分配金の正規表現マッチ失敗: コード=3597, URL=https://finance.yahoo.co.jp/quote/3597.T		kmakita1201@gmail.com
+2025/08/09 13:53:48	DEBUG	分配金の正規表現マッチ失敗: コード=3597, URL=https://finance.yahoo.co.jp/quote/3597.T		kmakita1201@gmail.com
+2025/08/09 13:53:49	DEBUG	分配金の正規表現マッチ失敗: コード=3817, URL=https://finance.yahoo.co.jp/quote/3817.T		kmakita1201@gmail.com
+2025/08/09 13:53:50	DEBUG	分配金の正規表現マッチ失敗: コード=3817, URL=https://finance.yahoo.co.jp/quote/3817.T		kmakita1201@gmail.com
+2025/08/09 13:53:52	DEBUG	分配金の正規表現マッチ失敗: コード=3834, URL=https://finance.yahoo.co.jp/quote/3834.T		kmakita1201@gmail.com
+2025/08/09 13:53:54	DEBUG	分配金の正規表現マッチ失敗: コード=3834, URL=https://finance.yahoo.co.jp/quote/3834.T		kmakita1201@gmail.com
+2025/08/09 13:53:56	DEBUG	分配金の正規表現マッチ失敗: コード=4008, URL=https://finance.yahoo.co.jp/quote/4008.T		kmakita1201@gmail.com
+2025/08/09 13:53:57	DEBUG	分配金の正規表現マッチ失敗: コード=4008, URL=https://finance.yahoo.co.jp/quote/4008.T		kmakita1201@gmail.com
+2025/08/09 13:53:58	DEBUG	Attempting to update 分配金 data	{"batchStart":20,"colIndex":6,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:54:00	DEBUG	配当金の生の取得値: コード=3597, 値="500"		kmakita1201@gmail.com
+2025/08/09 13:54:00	DEBUG	配当金の処理後の値: コード=3597, 元の値="500", 処理後="500"		kmakita1201@gmail.com
+2025/08/09 13:54:02	DEBUG	配当金の生の取得値: コード=3817, 値="180"		kmakita1201@gmail.com
+2025/08/09 13:54:02	DEBUG	配当金の処理後の値: コード=3817, 元の値="180", 処理後="180"		kmakita1201@gmail.com
+2025/08/09 13:54:03	DEBUG	配当金の生の取得値: コード=3834, 値="25"		kmakita1201@gmail.com
+2025/08/09 13:54:04	DEBUG	配当金の処理後の値: コード=3834, 元の値="25", 処理後="25"		kmakita1201@gmail.com
+2025/08/09 13:54:05	DEBUG	配当金の生の取得値: コード=4008, 値="200"		kmakita1201@gmail.com
+2025/08/09 13:54:05	DEBUG	配当金の処理後の値: コード=4008, 元の値="200", 処理後="200"		kmakita1201@gmail.com
+2025/08/09 13:54:06	DEBUG	Attempting to update 配当金 data	{"batchStart":20,"colIndex":5,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:54:09	DEBUG	EPS(予想)の生の取得値: コード=3597, 値="468.4"		kmakita1201@gmail.com
+2025/08/09 13:54:11	DEBUG	EPS(予想)の生の取得値: コード=3817, 値="387.8"		kmakita1201@gmail.com
+2025/08/09 13:54:13	DEBUG	EPS(予想)の生の取得値: コード=3834, 値="63.0"		kmakita1201@gmail.com
+2025/08/09 13:54:14	DEBUG	EPS(予想)の生の取得値: コード=4008, 値="511.2"		kmakita1201@gmail.com
+2025/08/09 13:54:15	DEBUG	Attempting to update EPS(予想) data	{"batchStart":20,"colIndex":7,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:54:17	DEBUG	BPSの生の取得値: コード=3597, 値="13,227"		kmakita1201@gmail.com
+2025/08/09 13:54:18	DEBUG	BPSの生の取得値: コード=3817, 値="2,454"		kmakita1201@gmail.com
+2025/08/09 13:54:19	DEBUG	BPSの生の取得値: コード=3834, 値="484"		kmakita1201@gmail.com
+2025/08/09 13:54:21	DEBUG	BPSの生の取得値: コード=4008, 値="7,192"		kmakita1201@gmail.com
+2025/08/09 13:54:22	DEBUG	Attempting to update BPS data	{"batchStart":20,"colIndex":8,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:54:26	DEBUG	権利確定の生の取得値: コード=4041, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 13:54:27	DEBUG	権利確定の生の取得値: コード=4042, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 13:54:29	DEBUG	権利確定の生の取得値: コード=4061, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 13:54:31	DEBUG	権利確定の生の取得値: コード=4220, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 13:54:32	DEBUG	Attempting to update 権利確定 data	{"batchStart":24,"colIndex":9,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:54:34	DEBUG	分配金の正規表現マッチ失敗: コード=4041, URL=https://finance.yahoo.co.jp/quote/4041.T		kmakita1201@gmail.com
+2025/08/09 13:54:35	DEBUG	分配金の正規表現マッチ失敗: コード=4041, URL=https://finance.yahoo.co.jp/quote/4041.T		kmakita1201@gmail.com
+2025/08/09 13:54:37	DEBUG	分配金の正規表現マッチ失敗: コード=4042, URL=https://finance.yahoo.co.jp/quote/4042.T		kmakita1201@gmail.com
+2025/08/09 13:54:38	DEBUG	分配金の正規表現マッチ失敗: コード=4042, URL=https://finance.yahoo.co.jp/quote/4042.T		kmakita1201@gmail.com
+2025/08/09 13:54:39	DEBUG	分配金の正規表現マッチ失敗: コード=4061, URL=https://finance.yahoo.co.jp/quote/4061.T		kmakita1201@gmail.com
+2025/08/09 13:54:41	DEBUG	分配金の正規表現マッチ失敗: コード=4061, URL=https://finance.yahoo.co.jp/quote/4061.T		kmakita1201@gmail.com
+2025/08/09 13:54:42	DEBUG	分配金の正規表現マッチ失敗: コード=4220, URL=https://finance.yahoo.co.jp/quote/4220.T		kmakita1201@gmail.com
+2025/08/09 13:54:43	DEBUG	分配金の正規表現マッチ失敗: コード=4220, URL=https://finance.yahoo.co.jp/quote/4220.T		kmakita1201@gmail.com
+2025/08/09 13:54:44	DEBUG	Attempting to update 分配金 data	{"batchStart":24,"colIndex":6,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:54:46	DEBUG	配当金の生の取得値: コード=4041, 値="140"		kmakita1201@gmail.com
+2025/08/09 13:54:46	DEBUG	配当金の処理後の値: コード=4041, 元の値="140", 処理後="140"		kmakita1201@gmail.com
+2025/08/09 13:54:50	DEBUG	配当金の生の取得値: コード=4042, 値="100"		kmakita1201@gmail.com
+2025/08/09 13:54:50	DEBUG	配当金の処理後の値: コード=4042, 元の値="100", 処理後="100"		kmakita1201@gmail.com
+2025/08/09 13:54:51	DEBUG	配当金の生の取得値: コード=4061, 値="100"		kmakita1201@gmail.com
+2025/08/09 13:54:52	DEBUG	配当金の処理後の値: コード=4061, 元の値="100", 処理後="100"		kmakita1201@gmail.com
+2025/08/09 13:54:53	DEBUG	配当金の生の取得値: コード=4220, 値="41"		kmakita1201@gmail.com
+2025/08/09 13:54:53	DEBUG	配当金の処理後の値: コード=4220, 元の値="41", 処理後="41"		kmakita1201@gmail.com
+2025/08/09 13:54:54	DEBUG	Attempting to update 配当金 data	{"batchStart":24,"colIndex":5,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:54:56	DEBUG	EPS(予想)の生の取得値: コード=4041, 値="241.9"		kmakita1201@gmail.com
+2025/08/09 13:54:58	DEBUG	EPS(予想)の生の取得値: コード=4042, 値="194.7"		kmakita1201@gmail.com
+2025/08/09 13:54:59	DEBUG	EPS(予想)の生の取得値: コード=4061, 値="174.1"		kmakita1201@gmail.com
+2025/08/09 13:55:01	DEBUG	EPS(予想)の生の取得値: コード=4220, 値="114.0"		kmakita1201@gmail.com
+2025/08/09 13:55:02	DEBUG	Attempting to update EPS(予想) data	{"batchStart":24,"colIndex":7,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:55:04	DEBUG	BPSの生の取得値: コード=4041, 値="3,411"		kmakita1201@gmail.com
+2025/08/09 13:55:06	DEBUG	BPSの生の取得値: コード=4042, 値="2,548"		kmakita1201@gmail.com
+2025/08/09 13:55:07	DEBUG	BPSの生の取得値: コード=4061, 値="3,405"		kmakita1201@gmail.com
+2025/08/09 13:55:09	DEBUG	BPSの生の取得値: コード=4220, 値="1,256"		kmakita1201@gmail.com
+2025/08/09 13:55:09	DEBUG	Attempting to update BPS data	{"batchStart":24,"colIndex":8,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 13:55:11	WARN	安全マージンのため処理を中断しました（24/119件完了）。次回は24番目から再開します。		kmakita1201@gmail.com
+2025/08/09 13:55:13	DEBUG	実行タイマーをクリア		kmakita1201@gmail.com
+2025/08/09 13:55:13	INFO	タイムアウト管理: クリーンアップ完了		kmakita1201@gmail.com
+2025/08/09 14:26:41	INFO	分割処理による_Reference情報更新を開始します		kmakita1201@gmail.com
+2025/08/09 14:26:42	INFO	タイムアウト管理: 実行タイマーを開始しました		kmakita1201@gmail.com
+2025/08/09 14:26:43	INFO	_Referenceシートのヘッダー: コード, 銘柄名, 市場, 業種, 配当金, 分配金, EPS(予想), BPS, 権利確定, 配当金/分配金, みん株, 株探, Y!Finance, バフェット・コード, 株予報Pro		kmakita1201@gmail.com
+2025/08/09 14:26:44	DEBUG	設定データを取得しました	{"rowCount":17,"sampleRow":["コード","","","",""]}	kmakita1201@gmail.com
+2025/08/09 14:26:45	INFO	_Reference用更新項目を取得しました	{"dailyCount":6,"quarterlyCount":6,"totalCount":12,"dailyItems":"前日終値, 目標株価, 株価診断, 個人予想, アナリスト評価, シグナル","quarterlyItems":"権利確定, 分配金, 配当金, US配当金, EPS(予想), BPS"}	kmakita1201@gmail.com
+2025/08/09 14:26:46	DEBUG	設定項目 1	{"keyword":"前日終値","regex":"<th class=\"ly_vamd_inner ly_colsize_3_fix tal wsnw\">前日終値(?:<span[^>]*>[^<]*<\\/span>)?<\\/th>\\s*<td class=\"ly_vamd_inner ly_colsize_9_fix fwb tar wsnw\">([\\d,\\.]+)円<\\/td>","tag":"tr","url":"https://minkabu.jp/stock/{code}","frequency":"毎日"}	kmakita1201@gmail.com
+2025/08/09 14:26:47	DEBUG	設定項目 2	{"keyword":"目標株価","regex":"<div class=\"md_target_box_price\">([\\d,]+)<span class=\"decimal\">円<\\/span><\\/div>","tag":"div","url":"https://minkabu.jp/stock/{code}/analysis","frequency":"毎日"}	kmakita1201@gmail.com
+2025/08/09 14:26:47	DEBUG	設定項目 3	{"keyword":"株価診断","regex":"<div\\s+class=\"flex items-end justify-end gap-1 text-2xl font-bold text-shadow\">\\s*<span>([\\d,]+)<\\/span><span\\s+class=\"text-xs leading-5\">円<\\/span>\\s*<\\/div>","tag":"div","url":"https://minkabu.jp/stock/{code}/research","frequency":"毎日"}	kmakita1201@gmail.com
+2025/08/09 14:26:48	DEBUG	設定項目 4	{"keyword":"個人予想","regex":"<div\\s+class=\"flex items-end gap-2\">\\s*<span\\s+class=\"text-3xl font-bold\">([\\d,]+)<\\/span>\\s*<span\\s+class=\"font-bold\">円<\\/span>\\s*<\\/div>","tag":"div","url":"https://minkabu.jp/stock/{code}/pick","frequency":"毎日"}	kmakita1201@gmail.com
+2025/08/09 14:26:48	DEBUG	設定項目 5	{"keyword":"アナリスト評価","regex":"<div\\s+class=\"fwb\"><span\\s+class=\"fsxxl\">([\\d,]+)<\\/span>&nbsp;円<\\/div>","tag":"div","url":"https://minkabu.jp/stock/{code}/analyst_consensus","frequency":"毎日"}	kmakita1201@gmail.com
+2025/08/09 14:26:49	DEBUG	設定項目 6	{"keyword":"シグナル","regex":"<p><strong>シグナル<\\/strong><\\/p>\\s*<p class=\".*?\">(.*?)<\\/p>","tag":"p","url":"https://kabuyoho.jp/reportTop?bcode={code}","frequency":"毎日"}	kmakita1201@gmail.com
+2025/08/09 14:26:50	DEBUG	設定項目 7	{"keyword":"権利確定","regex":"<th class=\"ph5 pl10\">配当権利確定月<\\/th>\\s*<td class=\"ph5 pl10 fwb\">(.*?)<\\/td>","tag":"tr","url":"https://minkabu.jp/stock/{code}/dividend","frequency":"決算ごと"}	kmakita1201@gmail.com
+2025/08/09 14:26:51	DEBUG	設定項目 8	{"keyword":"分配金","regex":"<span[^>]*DataListItem__name[^>]*>予想分配金<\\/span>[\\s\\S]*?<span[^>]*StyledNumber__value[^>]*>([\\d,\\.]+)<\\/span>","tag":"span","url":"https://finance.yahoo.co.jp/quote/{code}.T","frequency":"決算ごと"}	kmakita1201@gmail.com
+2025/08/09 14:26:51	DEBUG	設定項目 9	{"keyword":"配当金","regex":"<span class=\"dividend-state__amount__integer\">(\\d+)\\.<\\/span><span class=\"dividend-state__amount__decimal\">(\\d+)<\\/span><span class=\"dividend-state__amount__yen\">円<\\/span>","tag":"span","url":"https://minkabu.jp/stock/{code}/dividend","frequency":"決算ごと"}	kmakita1201@gmail.com
+2025/08/09 14:26:52	DEBUG	設定項目 10	{"keyword":"US配当金","regex":"<td class=\"snapshot-td2 cursor-pointer w-\\[7%\\]\"[^>]*>Dividend TTM<\\/td><td[^>]*><b>(\\d+\\.\\d+)\\s","tag":"td","url":"https://finviz.com/quote.ashx?t={code}&p=d","frequency":"決算ごと"}	kmakita1201@gmail.com
+2025/08/09 14:26:53	DEBUG	設定項目 11	{"keyword":"EPS(予想)","regex":"<th>\\s*<span>EPS\\(予想\\)<\\/span>\\s*<\\/th>\\s*<td[^>]*>\\s*<p[^>]*>([\\d,.]+)(?:&nbsp;|\\s)?円<\\/p>","tag":"span","url":"https://kabuyoho.jp/reportTarget?bcode={code}","frequency":"決算ごと"}	kmakita1201@gmail.com
+2025/08/09 14:26:53	DEBUG	設定項目 12	{"keyword":"BPS","regex":"<th>\\s*<span>BPS\\(実績\\)<\\/span>\\s*<\\/th>\\s*<td[^>]*>\\s*<p[^>]*>([\\d,]+)(?:&nbsp;|\\s)?円<\\/p>","tag":"span","url":"https://kabuyoho.jp/reportTarget?bcode={code}","frequency":"決算ごと"}	kmakita1201@gmail.com
+2025/08/09 14:26:54	INFO	_Referenceシート処理対象: 119件		kmakita1201@gmail.com
+2025/08/09 14:26:55	INFO	進捗状況: 0% (0/119) - 処理を開始します...		kmakita1201@gmail.com
+2025/08/09 14:26:57	INFO	進捗状況: 0% (0/119) - バッチ 1/30 を処理中...		kmakita1201@gmail.com
+2025/08/09 14:26:58	INFO	進捗状況: 0% (0/119) - 権利確定情報を更新中...		kmakita1201@gmail.com
+2025/08/09 14:27:00	DEBUG	権利確定の生の取得値: コード=1605, 値="6月, 12月"		kmakita1201@gmail.com
+2025/08/09 14:27:02	DEBUG	権利確定の生の取得値: コード=1723, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 14:27:03	DEBUG	権利確定の生の取得値: コード=1911, 値="6月, 12月"		kmakita1201@gmail.com
+2025/08/09 14:27:05	DEBUG	権利確定の生の取得値: コード=1928, 値="1月, 7月"		kmakita1201@gmail.com
+2025/08/09 14:27:06	INFO	進捗状況: 0% (0/119) - 権利確定情報を更新中... (4件)		kmakita1201@gmail.com
+2025/08/09 14:27:06	DEBUG	Attempting to update 権利確定 data	{"batchStart":0,"colIndex":9,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:27:07	INFO	進捗状況: 0% (0/119) - 分配金情報を更新中...		kmakita1201@gmail.com
+2025/08/09 14:27:08	DEBUG	分配金の正規表現マッチ失敗: コード=1605, URL=https://finance.yahoo.co.jp/quote/1605.T		kmakita1201@gmail.com
+2025/08/09 14:27:10	DEBUG	分配金の正規表現マッチ失敗: コード=1605, URL=https://finance.yahoo.co.jp/quote/1605.T		kmakita1201@gmail.com
+2025/08/09 14:27:11	DEBUG	分配金の正規表現マッチ失敗: コード=1723, URL=https://finance.yahoo.co.jp/quote/1723.T		kmakita1201@gmail.com
+2025/08/09 14:27:12	DEBUG	分配金の正規表現マッチ失敗: コード=1723, URL=https://finance.yahoo.co.jp/quote/1723.T		kmakita1201@gmail.com
+2025/08/09 14:27:14	DEBUG	分配金の正規表現マッチ失敗: コード=1911, URL=https://finance.yahoo.co.jp/quote/1911.T		kmakita1201@gmail.com
+2025/08/09 14:27:15	DEBUG	分配金の正規表現マッチ失敗: コード=1911, URL=https://finance.yahoo.co.jp/quote/1911.T		kmakita1201@gmail.com
+2025/08/09 14:27:16	DEBUG	分配金の正規表現マッチ失敗: コード=1928, URL=https://finance.yahoo.co.jp/quote/1928.T		kmakita1201@gmail.com
+2025/08/09 14:27:17	DEBUG	分配金の正規表現マッチ失敗: コード=1928, URL=https://finance.yahoo.co.jp/quote/1928.T		kmakita1201@gmail.com
+2025/08/09 14:27:18	INFO	進捗状況: 0% (0/119) - 分配金情報を更新中... (4件)		kmakita1201@gmail.com
+2025/08/09 14:27:18	DEBUG	Attempting to update 分配金 data	{"batchStart":0,"colIndex":6,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:27:20	INFO	進捗状況: 0% (0/119) - 配当金情報を更新中...		kmakita1201@gmail.com
+2025/08/09 14:27:21	DEBUG	配当金の生の取得値: コード=1605, 値="100"		kmakita1201@gmail.com
+2025/08/09 14:27:22	DEBUG	配当金の処理後の値: コード=1605, 元の値="100", 処理後="100"		kmakita1201@gmail.com
+2025/08/09 14:27:24	DEBUG	配当金の生の取得値: コード=1723, 値="132"		kmakita1201@gmail.com
+2025/08/09 14:27:24	DEBUG	配当金の処理後の値: コード=1723, 元の値="132", 処理後="132"		kmakita1201@gmail.com
+2025/08/09 14:27:25	DEBUG	配当金の生の取得値: コード=1911, 値="50"		kmakita1201@gmail.com
+2025/08/09 14:27:26	DEBUG	配当金の処理後の値: コード=1911, 元の値="50", 処理後="50"		kmakita1201@gmail.com
+2025/08/09 14:27:27	DEBUG	配当金の生の取得値: コード=1928, 値="144"		kmakita1201@gmail.com
+2025/08/09 14:27:28	DEBUG	配当金の処理後の値: コード=1928, 元の値="144", 処理後="144"		kmakita1201@gmail.com
+2025/08/09 14:27:28	INFO	進捗状況: 0% (0/119) - 配当金情報を更新中... (4件)		kmakita1201@gmail.com
+2025/08/09 14:27:28	DEBUG	Attempting to update 配当金 data	{"batchStart":0,"colIndex":5,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:27:29	INFO	進捗状況: 0% (0/119) - EPS(予想)情報を更新中...		kmakita1201@gmail.com
+2025/08/09 14:27:32	DEBUG	EPS(予想)の生の取得値: コード=1605, 値="309.0"		kmakita1201@gmail.com
+2025/08/09 14:27:33	DEBUG	EPS(予想)の生の取得値: コード=1723, 値="405.0"		kmakita1201@gmail.com
+2025/08/09 14:27:35	DEBUG	EPS(予想)の生の取得値: コード=1911, 値="156.5"		kmakita1201@gmail.com
+2025/08/09 14:27:38	DEBUG	EPS(予想)の生の取得値: コード=1928, 値="358.0"		kmakita1201@gmail.com
+2025/08/09 14:27:39	INFO	進捗状況: 0% (0/119) - EPS(予想)情報を更新中... (4件)		kmakita1201@gmail.com
+2025/08/09 14:27:40	DEBUG	Attempting to update EPS(予想) data	{"batchStart":0,"colIndex":7,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:27:41	INFO	進捗状況: 0% (0/119) - BPS情報を更新中...		kmakita1201@gmail.com
+2025/08/09 14:27:42	DEBUG	BPSの生の取得値: コード=1605, 値="3,830"		kmakita1201@gmail.com
+2025/08/09 14:27:45	DEBUG	BPSの生の取得値: コード=1723, 値="2,495"		kmakita1201@gmail.com
+2025/08/09 14:27:46	DEBUG	BPSの生の取得値: コード=1911, 値="1,436"		kmakita1201@gmail.com
+2025/08/09 14:27:48	DEBUG	BPSの生の取得値: コード=1928, 値="2,906"		kmakita1201@gmail.com
+2025/08/09 14:27:48	INFO	進捗状況: 0% (0/119) - BPS情報を更新中... (4件)		kmakita1201@gmail.com
+2025/08/09 14:27:49	DEBUG	Attempting to update BPS data	{"batchStart":0,"colIndex":8,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:27:53	DEBUG	権利確定の生の取得値: コード=1939, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 14:27:54	DEBUG	権利確定の生の取得値: コード=1951, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 14:27:55	DEBUG	権利確定の生の取得値: コード=1963, 値="3月"		kmakita1201@gmail.com
+2025/08/09 14:27:56	DEBUG	権利確定の生の取得値: コード=2003, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 14:27:57	DEBUG	Attempting to update 権利確定 data	{"batchStart":4,"colIndex":9,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:27:59	DEBUG	分配金の正規表現マッチ失敗: コード=1939, URL=https://finance.yahoo.co.jp/quote/1939.T		kmakita1201@gmail.com
+2025/08/09 14:28:00	DEBUG	分配金の正規表現マッチ失敗: コード=1939, URL=https://finance.yahoo.co.jp/quote/1939.T		kmakita1201@gmail.com
+2025/08/09 14:28:01	DEBUG	分配金の正規表現マッチ失敗: コード=1951, URL=https://finance.yahoo.co.jp/quote/1951.T		kmakita1201@gmail.com
+2025/08/09 14:28:03	DEBUG	分配金の正規表現マッチ失敗: コード=1951, URL=https://finance.yahoo.co.jp/quote/1951.T		kmakita1201@gmail.com
+2025/08/09 14:28:05	DEBUG	分配金の正規表現マッチ失敗: コード=1963, URL=https://finance.yahoo.co.jp/quote/1963.T		kmakita1201@gmail.com
+2025/08/09 14:28:06	DEBUG	分配金の正規表現マッチ失敗: コード=1963, URL=https://finance.yahoo.co.jp/quote/1963.T		kmakita1201@gmail.com
+2025/08/09 14:28:07	DEBUG	分配金の正規表現マッチ失敗: コード=2003, URL=https://finance.yahoo.co.jp/quote/2003.T		kmakita1201@gmail.com
+2025/08/09 14:28:08	DEBUG	分配金の正規表現マッチ失敗: コード=2003, URL=https://finance.yahoo.co.jp/quote/2003.T		kmakita1201@gmail.com
+2025/08/09 14:28:09	DEBUG	Attempting to update 分配金 data	{"batchStart":4,"colIndex":6,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:28:10	DEBUG	配当金の生の取得値: コード=1939, 値="65"		kmakita1201@gmail.com
+2025/08/09 14:28:12	DEBUG	配当金の処理後の値: コード=1939, 元の値="65", 処理後="65"		kmakita1201@gmail.com
+2025/08/09 14:28:13	DEBUG	配当金の生の取得値: コード=1951, 値="66"		kmakita1201@gmail.com
+2025/08/09 14:28:13	DEBUG	配当金の処理後の値: コード=1951, 元の値="66", 処理後="66"		kmakita1201@gmail.com
+2025/08/09 14:28:15	DEBUG	配当金の生の取得値: コード=1963, 値="40"		kmakita1201@gmail.com
+2025/08/09 14:28:15	DEBUG	配当金の処理後の値: コード=1963, 元の値="40", 処理後="40"		kmakita1201@gmail.com
+2025/08/09 14:28:17	DEBUG	配当金の生の取得値: コード=2003, 値="280"		kmakita1201@gmail.com
+2025/08/09 14:28:17	DEBUG	配当金の処理後の値: コード=2003, 元の値="280", 処理後="280"		kmakita1201@gmail.com
+2025/08/09 14:28:18	DEBUG	Attempting to update 配当金 data	{"batchStart":4,"colIndex":5,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:28:21	DEBUG	EPS(予想)の生の取得値: コード=1939, 値="105.8"		kmakita1201@gmail.com
+2025/08/09 14:28:22	DEBUG	EPS(予想)の生の取得値: コード=1951, 値="145.5"		kmakita1201@gmail.com
+2025/08/09 14:28:24	DEBUG	EPS(予想)の生の取得値: コード=1963, 値="62.1"		kmakita1201@gmail.com
+2025/08/09 14:28:25	DEBUG	EPS(予想)の生の取得値: コード=2003, 値="461.3"		kmakita1201@gmail.com
+2025/08/09 14:28:26	DEBUG	Attempting to update EPS(予想) data	{"batchStart":4,"colIndex":7,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:28:28	DEBUG	BPSの生の取得値: コード=1939, 値="1,359"		kmakita1201@gmail.com
+2025/08/09 14:28:29	DEBUG	BPSの生の取得値: コード=1951, 値="1,530"		kmakita1201@gmail.com
+2025/08/09 14:28:31	DEBUG	BPSの生の取得値: コード=1963, 値="1,571"		kmakita1201@gmail.com
+2025/08/09 14:28:32	DEBUG	BPSの生の取得値: コード=2003, 値="5,372"		kmakita1201@gmail.com
+2025/08/09 14:28:33	DEBUG	Attempting to update BPS data	{"batchStart":4,"colIndex":8,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:28:36	DEBUG	権利確定の生の取得値: コード=208A, 値="6月"		kmakita1201@gmail.com
+2025/08/09 14:28:37	DEBUG	権利確定の生の取得値: コード=2169, 値="6月, 12月"		kmakita1201@gmail.com
+2025/08/09 14:28:38	DEBUG	権利確定の生の取得値: コード=2296, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 14:28:40	DEBUG	権利確定の生の取得値: コード=2393, 値="3月"		kmakita1201@gmail.com
+2025/08/09 14:28:40	DEBUG	Attempting to update 権利確定 data	{"batchStart":8,"colIndex":9,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:28:43	DEBUG	分配金の正規表現マッチ失敗: コード=208A, URL=https://finance.yahoo.co.jp/quote/208A.T		kmakita1201@gmail.com
+2025/08/09 14:28:44	DEBUG	分配金の正規表現マッチ失敗: コード=208A, URL=https://finance.yahoo.co.jp/quote/208A.T		kmakita1201@gmail.com
+2025/08/09 14:28:46	DEBUG	分配金の正規表現マッチ失敗: コード=2169, URL=https://finance.yahoo.co.jp/quote/2169.T		kmakita1201@gmail.com
+2025/08/09 14:28:47	DEBUG	分配金の正規表現マッチ失敗: コード=2169, URL=https://finance.yahoo.co.jp/quote/2169.T		kmakita1201@gmail.com
+2025/08/09 14:28:49	DEBUG	分配金の正規表現マッチ失敗: コード=2296, URL=https://finance.yahoo.co.jp/quote/2296.T		kmakita1201@gmail.com
+2025/08/09 14:28:51	DEBUG	分配金の正規表現マッチ失敗: コード=2296, URL=https://finance.yahoo.co.jp/quote/2296.T		kmakita1201@gmail.com
+2025/08/09 14:28:53	DEBUG	分配金の正規表現マッチ失敗: コード=2393, URL=https://finance.yahoo.co.jp/quote/2393.T		kmakita1201@gmail.com
+2025/08/09 14:28:53	DEBUG	分配金の正規表現マッチ失敗: コード=2393, URL=https://finance.yahoo.co.jp/quote/2393.T		kmakita1201@gmail.com
+2025/08/09 14:28:54	DEBUG	Attempting to update 分配金 data	{"batchStart":8,"colIndex":6,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:28:55	DEBUG	配当金の生の取得値: コード=208A, 値="80"		kmakita1201@gmail.com
+2025/08/09 14:28:56	DEBUG	配当金の処理後の値: コード=208A, 元の値="80", 処理後="80"		kmakita1201@gmail.com
+2025/08/09 14:28:57	DEBUG	配当金の生の取得値: コード=2169, 値="74"		kmakita1201@gmail.com
+2025/08/09 14:28:58	DEBUG	配当金の処理後の値: コード=2169, 元の値="74", 処理後="74"		kmakita1201@gmail.com
+2025/08/09 14:28:59	DEBUG	配当金の生の取得値: コード=2296, 値="320"		kmakita1201@gmail.com
+2025/08/09 14:29:00	DEBUG	配当金の処理後の値: コード=2296, 元の値="320", 処理後="320"		kmakita1201@gmail.com
+2025/08/09 14:29:00	DEBUG	配当金の生の取得値: コード=2393, 値="72"		kmakita1201@gmail.com
+2025/08/09 14:29:01	DEBUG	配当金の処理後の値: コード=2393, 元の値="72", 処理後="72"		kmakita1201@gmail.com
+2025/08/09 14:29:01	DEBUG	Attempting to update 配当金 data	{"batchStart":8,"colIndex":5,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:29:04	DEBUG	EPS(予想)の生の取得値: コード=208A, 値="183.3"		kmakita1201@gmail.com
+2025/08/09 14:29:06	DEBUG	EPS(予想)の生の取得値: コード=2169, 値="92.1"		kmakita1201@gmail.com
+2025/08/09 14:29:07	DEBUG	EPS(予想)の生の取得値: コード=2296, 値="308.5"		kmakita1201@gmail.com
+2025/08/09 14:29:08	DEBUG	EPS(予想)の生の取得値: コード=2393, 値="122.3"		kmakita1201@gmail.com
+2025/08/09 14:29:09	DEBUG	Attempting to update EPS(予想) data	{"batchStart":8,"colIndex":7,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:29:12	DEBUG	BPSの生の取得値: コード=208A, 値="820"		kmakita1201@gmail.com
+2025/08/09 14:29:13	DEBUG	BPSの生の取得値: コード=2169, 値="1,309"		kmakita1201@gmail.com
+2025/08/09 14:29:15	DEBUG	BPSの生の取得値: コード=2296, 値="5,072"		kmakita1201@gmail.com
+2025/08/09 14:29:16	DEBUG	BPSの生の取得値: コード=2393, 値="1,082"		kmakita1201@gmail.com
+2025/08/09 14:29:17	DEBUG	Attempting to update BPS data	{"batchStart":8,"colIndex":8,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:29:20	DEBUG	権利確定の生の取得値: コード=2768, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 14:29:21	DEBUG	権利確定の生の取得値: コード=2914, 値="6月, 12月"		kmakita1201@gmail.com
+2025/08/09 14:29:22	DEBUG	権利確定の生の取得値: コード=3003, 値="6月, 12月"		kmakita1201@gmail.com
+2025/08/09 14:29:23	DEBUG	権利確定の生の取得値: コード=3050, 値="2月, 8月"		kmakita1201@gmail.com
+2025/08/09 14:29:24	DEBUG	Attempting to update 権利確定 data	{"batchStart":12,"colIndex":9,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:29:25	DEBUG	分配金の正規表現マッチ失敗: コード=2768, URL=https://finance.yahoo.co.jp/quote/2768.T		kmakita1201@gmail.com
+2025/08/09 14:29:27	DEBUG	分配金の正規表現マッチ失敗: コード=2768, URL=https://finance.yahoo.co.jp/quote/2768.T		kmakita1201@gmail.com
+2025/08/09 14:29:28	DEBUG	分配金の正規表現マッチ失敗: コード=2914, URL=https://finance.yahoo.co.jp/quote/2914.T		kmakita1201@gmail.com
+2025/08/09 14:29:29	DEBUG	分配金の正規表現マッチ失敗: コード=2914, URL=https://finance.yahoo.co.jp/quote/2914.T		kmakita1201@gmail.com
+2025/08/09 14:29:31	DEBUG	分配金の正規表現マッチ失敗: コード=3003, URL=https://finance.yahoo.co.jp/quote/3003.T		kmakita1201@gmail.com
+2025/08/09 14:29:31	DEBUG	分配金の正規表現マッチ失敗: コード=3003, URL=https://finance.yahoo.co.jp/quote/3003.T		kmakita1201@gmail.com
+2025/08/09 14:29:32	DEBUG	分配金の正規表現マッチ失敗: コード=3050, URL=https://finance.yahoo.co.jp/quote/3050.T		kmakita1201@gmail.com
+2025/08/09 14:29:33	DEBUG	分配金の正規表現マッチ失敗: コード=3050, URL=https://finance.yahoo.co.jp/quote/3050.T		kmakita1201@gmail.com
+2025/08/09 14:29:34	DEBUG	Attempting to update 分配金 data	{"batchStart":12,"colIndex":6,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:29:36	DEBUG	配当金の生の取得値: コード=2768, 値="165"		kmakita1201@gmail.com
+2025/08/09 14:29:37	DEBUG	配当金の処理後の値: コード=2768, 元の値="165", 処理後="165"		kmakita1201@gmail.com
+2025/08/09 14:29:38	DEBUG	配当金の生の取得値: コード=2914, 値="208"		kmakita1201@gmail.com
+2025/08/09 14:29:40	DEBUG	配当金の処理後の値: コード=2914, 元の値="208", 処理後="208"		kmakita1201@gmail.com
+2025/08/09 14:29:41	DEBUG	配当金の生の取得値: コード=3003, 値="57"		kmakita1201@gmail.com
+2025/08/09 14:29:42	DEBUG	配当金の処理後の値: コード=3003, 元の値="57", 処理後="57"		kmakita1201@gmail.com
+2025/08/09 14:29:43	DEBUG	配当金の生の取得値: コード=3050, 値="46"		kmakita1201@gmail.com
+2025/08/09 14:29:44	DEBUG	配当金の処理後の値: コード=3050, 元の値="46", 処理後="46"		kmakita1201@gmail.com
+2025/08/09 14:29:46	DEBUG	Attempting to update 配当金 data	{"batchStart":12,"colIndex":5,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:29:49	DEBUG	EPS(予想)の生の取得値: コード=2768, 値="547.2"		kmakita1201@gmail.com
+2025/08/09 14:29:50	DEBUG	EPS(予想)の生の取得値: コード=2914, 値="278.2"		kmakita1201@gmail.com
+2025/08/09 14:29:53	DEBUG	EPS(予想)の生の取得値: コード=3003, 値="142.1"		kmakita1201@gmail.com
+2025/08/09 14:29:55	DEBUG	EPS(予想)の生の取得値: コード=3050, 値="146.3"		kmakita1201@gmail.com
+2025/08/09 14:29:56	DEBUG	Attempting to update EPS(予想) data	{"batchStart":12,"colIndex":7,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:29:59	DEBUG	BPSの生の取得値: コード=2768, 値="4,508"		kmakita1201@gmail.com
+2025/08/09 14:30:01	DEBUG	BPSの生の取得値: コード=2914, 値="2,287"		kmakita1201@gmail.com
+2025/08/09 14:30:03	DEBUG	BPSの生の取得値: コード=3003, 値="1,117"		kmakita1201@gmail.com
+2025/08/09 14:30:04	DEBUG	BPSの生の取得値: コード=3050, 値="2,020"		kmakita1201@gmail.com
+2025/08/09 14:30:05	DEBUG	Attempting to update BPS data	{"batchStart":12,"colIndex":8,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:30:08	DEBUG	権利確定の生の取得値: コード=3076, 値="6月, 12月"		kmakita1201@gmail.com
+2025/08/09 14:30:09	DEBUG	権利確定の生の取得値: コード=3231, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 14:30:10	DEBUG	権利確定の正規表現マッチ失敗: コード=3269, URL=https://minkabu.jp/stock/3269/dividend		kmakita1201@gmail.com
+2025/08/09 14:30:11	DEBUG	権利確定の正規表現マッチ失敗: コード=3269, URL=https://minkabu.jp/stock/3269/dividend		kmakita1201@gmail.com
+2025/08/09 14:30:12	DEBUG	権利確定の生の取得値: コード=3407, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 14:30:13	DEBUG	Attempting to update 権利確定 data	{"batchStart":16,"colIndex":9,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:30:16	DEBUG	分配金の正規表現マッチ失敗: コード=3076, URL=https://finance.yahoo.co.jp/quote/3076.T		kmakita1201@gmail.com
+2025/08/09 14:30:17	DEBUG	分配金の正規表現マッチ失敗: コード=3076, URL=https://finance.yahoo.co.jp/quote/3076.T		kmakita1201@gmail.com
+2025/08/09 14:30:18	DEBUG	分配金の正規表現マッチ失敗: コード=3231, URL=https://finance.yahoo.co.jp/quote/3231.T		kmakita1201@gmail.com
+2025/08/09 14:30:19	DEBUG	分配金の正規表現マッチ失敗: コード=3231, URL=https://finance.yahoo.co.jp/quote/3231.T		kmakita1201@gmail.com
+2025/08/09 14:30:21	DEBUG	分配金の生の取得値: コード=3269, 値="6,310.00"		kmakita1201@gmail.com
+2025/08/09 14:30:22	DEBUG	分配金の正規表現マッチ失敗: コード=3407, URL=https://finance.yahoo.co.jp/quote/3407.T		kmakita1201@gmail.com
+2025/08/09 14:30:25	DEBUG	分配金の正規表現マッチ失敗: コード=3407, URL=https://finance.yahoo.co.jp/quote/3407.T		kmakita1201@gmail.com
+2025/08/09 14:30:25	DEBUG	Attempting to update 分配金 data	{"batchStart":16,"colIndex":6,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:30:27	DEBUG	配当金の生の取得値: コード=3076, 値="100"		kmakita1201@gmail.com
+2025/08/09 14:30:28	DEBUG	配当金の処理後の値: コード=3076, 元の値="100", 処理後="100"		kmakita1201@gmail.com
+2025/08/09 14:30:29	DEBUG	配当金の生の取得値: コード=3231, 値="36"		kmakita1201@gmail.com
+2025/08/09 14:30:29	DEBUG	配当金の処理後の値: コード=3231, 元の値="36", 処理後="36"		kmakita1201@gmail.com
+2025/08/09 14:30:31	DEBUG	配当金の正規表現マッチ失敗: コード=3269, URL=https://minkabu.jp/stock/3269/dividend		kmakita1201@gmail.com
+2025/08/09 14:30:32	DEBUG	"配当金のHTML内容(最初の500文字): <!DOCTYPE html>
+<html prefix=""og: https://ogp.me/ns#"" class=""mk_layout"" lang=""ja"">
+<head>
+  <meta charset=""UTF-8"">
+<title>みんかぶ - 資産形成のための情報メディア</title>
+<link href=""https://assets.minkabu.jp/stylesheets/notosansjapanese.css"" rel=""stylesheet"" />
+<meta content=""みんかぶ - 資産形成のための情報メディア"" name=""description"" />
+<meta content=""みんなの株式,みんなの株,みんかぶ,株価予想,minkabu,みんなのかぶしき,みん株,株,株式,銘柄,株情報,株式投資,投資情報"" name=""keywords"" />
+
+<link rel=""shortcut icon"" href=""https://minkabu.jp/favicon.ico"" />
+<link rel=""help"" href=""http"		kmakita1201@gmail.com
+2025/08/09 14:30:32	DEBUG	配当金の正規表現: /<span class="dividend-state__amount__integer">(\d+)\.<\/span><span class="dividend-state__amount__decimal">(\d+)<\/span><span class="dividend-state__amount__yen">円<\/span>/s		kmakita1201@gmail.com
+2025/08/09 14:30:33	DEBUG	配当金の正規表現マッチ失敗: コード=3269, URL=https://minkabu.jp/stock/3269/dividend		kmakita1201@gmail.com
+2025/08/09 14:30:35	DEBUG	"配当金のHTML内容(最初の500文字): <!DOCTYPE html>
+<html prefix=""og: https://ogp.me/ns#"" class=""mk_layout"" lang=""ja"">
+<head>
+  <meta charset=""UTF-8"">
+<title>みんかぶ - 資産形成のための情報メディア</title>
+<link href=""https://assets.minkabu.jp/stylesheets/notosansjapanese.css"" rel=""stylesheet"" />
+<meta content=""みんかぶ - 資産形成のための情報メディア"" name=""description"" />
+<meta content=""みんなの株式,みんなの株,みんかぶ,株価予想,minkabu,みんなのかぶしき,みん株,株,株式,銘柄,株情報,株式投資,投資情報"" name=""keywords"" />
+
+<link rel=""shortcut icon"" href=""https://minkabu.jp/favicon.ico"" />
+<link rel=""help"" href=""http"		kmakita1201@gmail.com
+2025/08/09 14:30:35	DEBUG	配当金の正規表現: /<span class="dividend-state__amount__integer">(\d+)\.<\/span><span class="dividend-state__amount__decimal">(\d+)<\/span><span class="dividend-state__amount__yen">円<\/span>/s		kmakita1201@gmail.com
+2025/08/09 14:30:36	DEBUG	配当金の生の取得値: コード=3407, 値="40"		kmakita1201@gmail.com
+2025/08/09 14:30:37	DEBUG	配当金の処理後の値: コード=3407, 元の値="40", 処理後="40"		kmakita1201@gmail.com
+2025/08/09 14:30:37	DEBUG	Attempting to update 配当金 data	{"batchStart":16,"colIndex":5,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:30:40	DEBUG	EPS(予想)の生の取得値: コード=3076, 値="410.2"		kmakita1201@gmail.com
+2025/08/09 14:30:43	DEBUG	EPS(予想)の生の取得値: コード=3231, 値="87.3"		kmakita1201@gmail.com
+2025/08/09 14:30:45	DEBUG	EPS(予想)の正規表現マッチ失敗: コード=3269, URL=https://kabuyoho.jp/reportTarget?bcode=3269		kmakita1201@gmail.com
+2025/08/09 14:30:47	DEBUG	EPS(予想)の正規表現マッチ失敗: コード=3269, URL=https://kabuyoho.jp/reportTarget?bcode=3269		kmakita1201@gmail.com
+2025/08/09 14:30:49	DEBUG	EPS(予想)の生の取得値: コード=3407, 値="92.0"		kmakita1201@gmail.com
+2025/08/09 14:30:50	DEBUG	Attempting to update EPS(予想) data	{"batchStart":16,"colIndex":7,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:30:51	DEBUG	BPSの生の取得値: コード=3076, 値="1,986"		kmakita1201@gmail.com
+2025/08/09 14:30:53	DEBUG	BPSの生の取得値: コード=3231, 値="870"		kmakita1201@gmail.com
+2025/08/09 14:30:55	DEBUG	BPSの正規表現マッチ失敗: コード=3269, URL=https://kabuyoho.jp/reportTarget?bcode=3269		kmakita1201@gmail.com
+2025/08/09 14:30:57	DEBUG	BPSの正規表現マッチ失敗: コード=3269, URL=https://kabuyoho.jp/reportTarget?bcode=3269		kmakita1201@gmail.com
+2025/08/09 14:30:58	DEBUG	BPSの生の取得値: コード=3407, 値="1,342"		kmakita1201@gmail.com
+2025/08/09 14:30:59	DEBUG	Attempting to update BPS data	{"batchStart":16,"colIndex":8,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:31:03	DEBUG	権利確定の生の取得値: コード=3597, 値="6月"		kmakita1201@gmail.com
+2025/08/09 14:31:05	DEBUG	権利確定の生の取得値: コード=3817, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 14:31:07	DEBUG	権利確定の生の取得値: コード=3834, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 14:31:08	DEBUG	権利確定の生の取得値: コード=4008, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 14:31:09	DEBUG	Attempting to update 権利確定 data	{"batchStart":20,"colIndex":9,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:31:10	DEBUG	分配金の正規表現マッチ失敗: コード=3597, URL=https://finance.yahoo.co.jp/quote/3597.T		kmakita1201@gmail.com
+2025/08/09 14:31:12	DEBUG	分配金の正規表現マッチ失敗: コード=3597, URL=https://finance.yahoo.co.jp/quote/3597.T		kmakita1201@gmail.com
+2025/08/09 14:31:13	DEBUG	分配金の正規表現マッチ失敗: コード=3817, URL=https://finance.yahoo.co.jp/quote/3817.T		kmakita1201@gmail.com
+2025/08/09 14:31:16	DEBUG	分配金の正規表現マッチ失敗: コード=3817, URL=https://finance.yahoo.co.jp/quote/3817.T		kmakita1201@gmail.com
+2025/08/09 14:31:17	DEBUG	分配金の正規表現マッチ失敗: コード=3834, URL=https://finance.yahoo.co.jp/quote/3834.T		kmakita1201@gmail.com
+2025/08/09 14:31:18	DEBUG	分配金の正規表現マッチ失敗: コード=3834, URL=https://finance.yahoo.co.jp/quote/3834.T		kmakita1201@gmail.com
+2025/08/09 14:31:19	DEBUG	分配金の正規表現マッチ失敗: コード=4008, URL=https://finance.yahoo.co.jp/quote/4008.T		kmakita1201@gmail.com
+2025/08/09 14:31:20	DEBUG	分配金の正規表現マッチ失敗: コード=4008, URL=https://finance.yahoo.co.jp/quote/4008.T		kmakita1201@gmail.com
+2025/08/09 14:31:21	DEBUG	Attempting to update 分配金 data	{"batchStart":20,"colIndex":6,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:31:23	DEBUG	配当金の生の取得値: コード=3597, 値="500"		kmakita1201@gmail.com
+2025/08/09 14:31:23	DEBUG	配当金の処理後の値: コード=3597, 元の値="500", 処理後="500"		kmakita1201@gmail.com
+2025/08/09 14:31:25	DEBUG	配当金の生の取得値: コード=3817, 値="180"		kmakita1201@gmail.com
+2025/08/09 14:31:25	DEBUG	配当金の処理後の値: コード=3817, 元の値="180", 処理後="180"		kmakita1201@gmail.com
+2025/08/09 14:31:26	DEBUG	配当金の生の取得値: コード=3834, 値="25"		kmakita1201@gmail.com
+2025/08/09 14:31:27	DEBUG	配当金の処理後の値: コード=3834, 元の値="25", 処理後="25"		kmakita1201@gmail.com
+2025/08/09 14:31:29	DEBUG	配当金の生の取得値: コード=4008, 値="200"		kmakita1201@gmail.com
+2025/08/09 14:31:29	DEBUG	配当金の処理後の値: コード=4008, 元の値="200", 処理後="200"		kmakita1201@gmail.com
+2025/08/09 14:31:30	DEBUG	Attempting to update 配当金 data	{"batchStart":20,"colIndex":5,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:31:32	DEBUG	EPS(予想)の生の取得値: コード=3597, 値="468.4"		kmakita1201@gmail.com
+2025/08/09 14:31:34	DEBUG	EPS(予想)の生の取得値: コード=3817, 値="387.8"		kmakita1201@gmail.com
+2025/08/09 14:31:36	DEBUG	EPS(予想)の生の取得値: コード=3834, 値="63.0"		kmakita1201@gmail.com
+2025/08/09 14:31:38	DEBUG	EPS(予想)の生の取得値: コード=4008, 値="511.2"		kmakita1201@gmail.com
+2025/08/09 14:31:39	DEBUG	Attempting to update EPS(予想) data	{"batchStart":20,"colIndex":7,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:31:40	DEBUG	BPSの生の取得値: コード=3597, 値="13,227"		kmakita1201@gmail.com
+2025/08/09 14:31:42	DEBUG	BPSの生の取得値: コード=3817, 値="2,454"		kmakita1201@gmail.com
+2025/08/09 14:31:43	DEBUG	BPSの生の取得値: コード=3834, 値="484"		kmakita1201@gmail.com
+2025/08/09 14:31:45	DEBUG	BPSの生の取得値: コード=4008, 値="7,192"		kmakita1201@gmail.com
+2025/08/09 14:31:46	DEBUG	Attempting to update BPS data	{"batchStart":20,"colIndex":8,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:31:49	WARN	安全マージンのため処理を中断しました（20/119件完了）。次回は20番目から再開します。		kmakita1201@gmail.com
+2025/08/09 14:31:50	DEBUG	実行タイマーをクリア		kmakita1201@gmail.com
+2025/08/09 14:31:50	INFO	タイムアウト管理: クリーンアップ完了		kmakita1201@gmail.com
+2025/08/09 14:45:45	INFO	分割処理による_Reference情報更新を開始します		kmakita1201@gmail.com
+2025/08/09 14:45:45	INFO	タイムアウト管理: 実行タイマーを開始しました		kmakita1201@gmail.com
+2025/08/09 14:45:48	INFO	_Referenceシートのヘッダー: コード, 銘柄名, 市場, 業種, 配当金, 分配金, EPS(予想), BPS, 権利確定, 配当金/分配金, みん株, 株探, Y!Finance, バフェット・コード, 株予報Pro		kmakita1201@gmail.com
+2025/08/09 14:45:49	DEBUG	設定データを取得しました	{"rowCount":17,"sampleRow":["コード","","","",""]}	kmakita1201@gmail.com
+2025/08/09 14:45:50	INFO	_Reference用更新項目を取得しました	{"dailyCount":6,"quarterlyCount":6,"totalCount":12,"dailyItems":"前日終値, 目標株価, 株価診断, 個人予想, アナリスト評価, シグナル","quarterlyItems":"権利確定, 分配金, 配当金, US配当金, EPS(予想), BPS"}	kmakita1201@gmail.com
+2025/08/09 14:45:50	DEBUG	設定項目 1	{"keyword":"前日終値","regex":"<th class=\"ly_vamd_inner ly_colsize_3_fix tal wsnw\">前日終値(?:<span[^>]*>[^<]*<\\/span>)?<\\/th>\\s*<td class=\"ly_vamd_inner ly_colsize_9_fix fwb tar wsnw\">([\\d,\\.]+)円<\\/td>","tag":"tr","url":"https://minkabu.jp/stock/{code}","frequency":"毎日"}	kmakita1201@gmail.com
+2025/08/09 14:45:51	DEBUG	設定項目 2	{"keyword":"目標株価","regex":"<div class=\"md_target_box_price\">([\\d,]+)<span class=\"decimal\">円<\\/span><\\/div>","tag":"div","url":"https://minkabu.jp/stock/{code}/analysis","frequency":"毎日"}	kmakita1201@gmail.com
+2025/08/09 14:45:51	DEBUG	設定項目 3	{"keyword":"株価診断","regex":"<div\\s+class=\"flex items-end justify-end gap-1 text-2xl font-bold text-shadow\">\\s*<span>([\\d,]+)<\\/span><span\\s+class=\"text-xs leading-5\">円<\\/span>\\s*<\\/div>","tag":"div","url":"https://minkabu.jp/stock/{code}/research","frequency":"毎日"}	kmakita1201@gmail.com
+2025/08/09 14:45:52	DEBUG	設定項目 4	{"keyword":"個人予想","regex":"<div\\s+class=\"flex items-end gap-2\">\\s*<span\\s+class=\"text-3xl font-bold\">([\\d,]+)<\\/span>\\s*<span\\s+class=\"font-bold\">円<\\/span>\\s*<\\/div>","tag":"div","url":"https://minkabu.jp/stock/{code}/pick","frequency":"毎日"}	kmakita1201@gmail.com
+2025/08/09 14:45:53	DEBUG	設定項目 5	{"keyword":"アナリスト評価","regex":"<div\\s+class=\"fwb\"><span\\s+class=\"fsxxl\">([\\d,]+)<\\/span>&nbsp;円<\\/div>","tag":"div","url":"https://minkabu.jp/stock/{code}/analyst_consensus","frequency":"毎日"}	kmakita1201@gmail.com
+2025/08/09 14:45:54	DEBUG	設定項目 6	{"keyword":"シグナル","regex":"<p><strong>シグナル<\\/strong><\\/p>\\s*<p class=\".*?\">(.*?)<\\/p>","tag":"p","url":"https://kabuyoho.jp/reportTop?bcode={code}","frequency":"毎日"}	kmakita1201@gmail.com
+2025/08/09 14:45:55	DEBUG	設定項目 7	{"keyword":"権利確定","regex":"<th class=\"ph5 pl10\">配当権利確定月<\\/th>\\s*<td class=\"ph5 pl10 fwb\">(.*?)<\\/td>","tag":"tr","url":"https://minkabu.jp/stock/{code}/dividend","frequency":"決算ごと"}	kmakita1201@gmail.com
+2025/08/09 14:45:56	DEBUG	設定項目 8	{"keyword":"分配金","regex":"<span[^>]*DataListItem__name[^>]*>予想分配金<\\/span>[\\s\\S]*?<span[^>]*StyledNumber__value[^>]*>([\\d,\\.]+)<\\/span>","tag":"span","url":"https://finance.yahoo.co.jp/quote/{code}.T","frequency":"決算ごと"}	kmakita1201@gmail.com
+2025/08/09 14:45:56	DEBUG	設定項目 9	{"keyword":"配当金","regex":"<span class=\"dividend-state__amount__integer\">(\\d+)\\.<\\/span><span class=\"dividend-state__amount__decimal\">(\\d+)<\\/span><span class=\"dividend-state__amount__yen\">円<\\/span>","tag":"span","url":"https://minkabu.jp/stock/{code}/dividend","frequency":"決算ごと"}	kmakita1201@gmail.com
+2025/08/09 14:45:57	DEBUG	設定項目 10	{"keyword":"US配当金","regex":"<td class=\"snapshot-td2 cursor-pointer w-\\[7%\\]\"[^>]*>Dividend TTM<\\/td><td[^>]*><b>(\\d+\\.\\d+)\\s","tag":"td","url":"https://finviz.com/quote.ashx?t={code}&p=d","frequency":"決算ごと"}	kmakita1201@gmail.com
+2025/08/09 14:45:58	DEBUG	設定項目 11	{"keyword":"EPS(予想)","regex":"<th>\\s*<span>EPS\\(予想\\)<\\/span>\\s*<\\/th>\\s*<td[^>]*>\\s*<p[^>]*>([\\d,.]+)(?:&nbsp;|\\s)?円<\\/p>","tag":"span","url":"https://kabuyoho.jp/reportTarget?bcode={code}","frequency":"決算ごと"}	kmakita1201@gmail.com
+2025/08/09 14:45:59	DEBUG	設定項目 12	{"keyword":"BPS","regex":"<th>\\s*<span>BPS\\(実績\\)<\\/span>\\s*<\\/th>\\s*<td[^>]*>\\s*<p[^>]*>([\\d,]+)(?:&nbsp;|\\s)?円<\\/p>","tag":"span","url":"https://kabuyoho.jp/reportTarget?bcode={code}","frequency":"決算ごと"}	kmakita1201@gmail.com
+2025/08/09 14:46:00	INFO	_Referenceシート処理対象: 119件		kmakita1201@gmail.com
+2025/08/09 14:46:01	INFO	進捗状況: 0% (0/119) - 処理を開始します...		kmakita1201@gmail.com
+2025/08/09 14:46:02	INFO	進捗状況: 0% (0/119) - バッチ 1/30 を処理中...		kmakita1201@gmail.com
+2025/08/09 14:46:03	INFO	進捗状況: 0% (0/119) - 権利確定情報を更新中...		kmakita1201@gmail.com
+2025/08/09 14:46:05	DEBUG	権利確定の生の取得値: コード=1605, 値="6月, 12月"		kmakita1201@gmail.com
+2025/08/09 14:46:07	DEBUG	権利確定の生の取得値: コード=1723, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 14:46:09	DEBUG	権利確定の生の取得値: コード=1911, 値="6月, 12月"		kmakita1201@gmail.com
+2025/08/09 14:46:11	DEBUG	権利確定の生の取得値: コード=1928, 値="1月, 7月"		kmakita1201@gmail.com
+2025/08/09 14:46:11	INFO	進捗状況: 0% (0/119) - 権利確定情報を更新中... (4件)		kmakita1201@gmail.com
+2025/08/09 14:46:17	DEBUG	Attempting to update 権利確定 data	{"batchStart":0,"colIndex":9,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:46:18	INFO	進捗状況: 0% (0/119) - 分配金情報を更新中...		kmakita1201@gmail.com
+2025/08/09 14:46:20	DEBUG	分配金の正規表現マッチ失敗: コード=1605, URL=https://finance.yahoo.co.jp/quote/1605.T		kmakita1201@gmail.com
+2025/08/09 14:46:28	DEBUG	分配金の正規表現マッチ失敗: コード=1605, URL=https://finance.yahoo.co.jp/quote/1605.T		kmakita1201@gmail.com
+2025/08/09 14:46:29	DEBUG	分配金の正規表現マッチ失敗: コード=1723, URL=https://finance.yahoo.co.jp/quote/1723.T		kmakita1201@gmail.com
+2025/08/09 14:46:31	DEBUG	分配金の正規表現マッチ失敗: コード=1723, URL=https://finance.yahoo.co.jp/quote/1723.T		kmakita1201@gmail.com
+2025/08/09 14:46:32	DEBUG	分配金の正規表現マッチ失敗: コード=1911, URL=https://finance.yahoo.co.jp/quote/1911.T		kmakita1201@gmail.com
+2025/08/09 14:46:33	DEBUG	分配金の正規表現マッチ失敗: コード=1911, URL=https://finance.yahoo.co.jp/quote/1911.T		kmakita1201@gmail.com
+2025/08/09 14:46:35	DEBUG	分配金の正規表現マッチ失敗: コード=1928, URL=https://finance.yahoo.co.jp/quote/1928.T		kmakita1201@gmail.com
+2025/08/09 14:46:36	DEBUG	分配金の正規表現マッチ失敗: コード=1928, URL=https://finance.yahoo.co.jp/quote/1928.T		kmakita1201@gmail.com
+2025/08/09 14:46:37	INFO	進捗状況: 0% (0/119) - 分配金情報を更新中... (4件)		kmakita1201@gmail.com
+2025/08/09 14:46:38	DEBUG	Attempting to update 分配金 data	{"batchStart":0,"colIndex":6,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:46:56	INFO	進捗状況: 0% (0/119) - 配当金情報を更新中...		kmakita1201@gmail.com
+2025/08/09 14:46:58	DEBUG	配当金の生の取得値: コード=1605, 値="100"		kmakita1201@gmail.com
+2025/08/09 14:46:58	DEBUG	配当金の処理後の値: コード=1605, 元の値="100", 処理後="100"		kmakita1201@gmail.com
+2025/08/09 14:47:00	DEBUG	配当金の生の取得値: コード=1723, 値="132"		kmakita1201@gmail.com
+2025/08/09 14:47:00	DEBUG	配当金の処理後の値: コード=1723, 元の値="132", 処理後="132"		kmakita1201@gmail.com
+2025/08/09 14:47:02	DEBUG	配当金の生の取得値: コード=1911, 値="50"		kmakita1201@gmail.com
+2025/08/09 14:47:03	DEBUG	配当金の処理後の値: コード=1911, 元の値="50", 処理後="50"		kmakita1201@gmail.com
+2025/08/09 14:47:05	DEBUG	配当金の生の取得値: コード=1928, 値="144"		kmakita1201@gmail.com
+2025/08/09 14:47:05	DEBUG	配当金の処理後の値: コード=1928, 元の値="144", 処理後="144"		kmakita1201@gmail.com
+2025/08/09 14:47:07	INFO	進捗状況: 0% (0/119) - 配当金情報を更新中... (4件)		kmakita1201@gmail.com
+2025/08/09 14:47:08	DEBUG	Attempting to update 配当金 data	{"batchStart":0,"colIndex":5,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:47:09	INFO	進捗状況: 0% (0/119) - EPS(予想)情報を更新中...		kmakita1201@gmail.com
+2025/08/09 14:47:11	DEBUG	EPS(予想)の生の取得値: コード=1605, 値="309.0"		kmakita1201@gmail.com
+2025/08/09 14:47:13	DEBUG	EPS(予想)の生の取得値: コード=1723, 値="405.0"		kmakita1201@gmail.com
+2025/08/09 14:47:15	DEBUG	EPS(予想)の生の取得値: コード=1911, 値="156.5"		kmakita1201@gmail.com
+2025/08/09 14:47:16	DEBUG	EPS(予想)の生の取得値: コード=1928, 値="358.0"		kmakita1201@gmail.com
+2025/08/09 14:47:17	INFO	進捗状況: 0% (0/119) - EPS(予想)情報を更新中... (4件)		kmakita1201@gmail.com
+2025/08/09 14:47:18	DEBUG	Attempting to update EPS(予想) data	{"batchStart":0,"colIndex":7,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:47:19	INFO	進捗状況: 0% (0/119) - BPS情報を更新中...		kmakita1201@gmail.com
+2025/08/09 14:47:20	DEBUG	BPSの生の取得値: コード=1605, 値="3,830"		kmakita1201@gmail.com
+2025/08/09 14:47:22	DEBUG	BPSの生の取得値: コード=1723, 値="2,495"		kmakita1201@gmail.com
+2025/08/09 14:47:23	DEBUG	BPSの生の取得値: コード=1911, 値="1,436"		kmakita1201@gmail.com
+2025/08/09 14:47:26	DEBUG	BPSの生の取得値: コード=1928, 値="2,906"		kmakita1201@gmail.com
+2025/08/09 14:47:26	INFO	進捗状況: 0% (0/119) - BPS情報を更新中... (4件)		kmakita1201@gmail.com
+2025/08/09 14:47:27	DEBUG	Attempting to update BPS data	{"batchStart":0,"colIndex":8,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:47:31	DEBUG	権利確定の生の取得値: コード=1939, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 14:47:32	DEBUG	権利確定の生の取得値: コード=1951, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 14:47:34	DEBUG	権利確定の生の取得値: コード=1963, 値="3月"		kmakita1201@gmail.com
+2025/08/09 14:47:36	DEBUG	権利確定の生の取得値: コード=2003, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 14:47:37	DEBUG	Attempting to update 権利確定 data	{"batchStart":4,"colIndex":9,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:47:38	DEBUG	分配金の正規表現マッチ失敗: コード=1939, URL=https://finance.yahoo.co.jp/quote/1939.T		kmakita1201@gmail.com
+2025/08/09 14:47:40	DEBUG	分配金の正規表現マッチ失敗: コード=1939, URL=https://finance.yahoo.co.jp/quote/1939.T		kmakita1201@gmail.com
+2025/08/09 14:47:42	DEBUG	分配金の正規表現マッチ失敗: コード=1951, URL=https://finance.yahoo.co.jp/quote/1951.T		kmakita1201@gmail.com
+2025/08/09 14:47:44	DEBUG	分配金の正規表現マッチ失敗: コード=1951, URL=https://finance.yahoo.co.jp/quote/1951.T		kmakita1201@gmail.com
+2025/08/09 14:47:45	DEBUG	分配金の正規表現マッチ失敗: コード=1963, URL=https://finance.yahoo.co.jp/quote/1963.T		kmakita1201@gmail.com
+2025/08/09 14:47:47	DEBUG	分配金の正規表現マッチ失敗: コード=1963, URL=https://finance.yahoo.co.jp/quote/1963.T		kmakita1201@gmail.com
+2025/08/09 14:47:48	DEBUG	分配金の正規表現マッチ失敗: コード=2003, URL=https://finance.yahoo.co.jp/quote/2003.T		kmakita1201@gmail.com
+2025/08/09 14:47:50	DEBUG	分配金の正規表現マッチ失敗: コード=2003, URL=https://finance.yahoo.co.jp/quote/2003.T		kmakita1201@gmail.com
+2025/08/09 14:47:50	DEBUG	Attempting to update 分配金 data	{"batchStart":4,"colIndex":6,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:47:52	DEBUG	配当金の生の取得値: コード=1939, 値="65"		kmakita1201@gmail.com
+2025/08/09 14:47:53	DEBUG	配当金の処理後の値: コード=1939, 元の値="65", 処理後="65"		kmakita1201@gmail.com
+2025/08/09 14:47:54	DEBUG	配当金の生の取得値: コード=1951, 値="66"		kmakita1201@gmail.com
+2025/08/09 14:47:56	DEBUG	配当金の処理後の値: コード=1951, 元の値="66", 処理後="66"		kmakita1201@gmail.com
+2025/08/09 14:47:57	DEBUG	配当金の生の取得値: コード=1963, 値="40"		kmakita1201@gmail.com
+2025/08/09 14:47:57	DEBUG	配当金の処理後の値: コード=1963, 元の値="40", 処理後="40"		kmakita1201@gmail.com
+2025/08/09 14:47:59	DEBUG	配当金の生の取得値: コード=2003, 値="280"		kmakita1201@gmail.com
+2025/08/09 14:48:00	DEBUG	配当金の処理後の値: コード=2003, 元の値="280", 処理後="280"		kmakita1201@gmail.com
+2025/08/09 14:48:00	DEBUG	Attempting to update 配当金 data	{"batchStart":4,"colIndex":5,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:48:02	DEBUG	EPS(予想)の生の取得値: コード=1939, 値="105.8"		kmakita1201@gmail.com
+2025/08/09 14:48:04	DEBUG	EPS(予想)の生の取得値: コード=1951, 値="145.5"		kmakita1201@gmail.com
+2025/08/09 14:48:06	DEBUG	EPS(予想)の生の取得値: コード=1963, 値="62.1"		kmakita1201@gmail.com
+2025/08/09 14:48:08	DEBUG	EPS(予想)の生の取得値: コード=2003, 値="461.3"		kmakita1201@gmail.com
+2025/08/09 14:48:08	DEBUG	Attempting to update EPS(予想) data	{"batchStart":4,"colIndex":7,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:48:10	DEBUG	BPSの生の取得値: コード=1939, 値="1,359"		kmakita1201@gmail.com
+2025/08/09 14:48:12	DEBUG	BPSの生の取得値: コード=1951, 値="1,530"		kmakita1201@gmail.com
+2025/08/09 14:48:13	DEBUG	BPSの生の取得値: コード=1963, 値="1,571"		kmakita1201@gmail.com
+2025/08/09 14:48:14	DEBUG	BPSの生の取得値: コード=2003, 値="5,372"		kmakita1201@gmail.com
+2025/08/09 14:48:15	DEBUG	Attempting to update BPS data	{"batchStart":4,"colIndex":8,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:48:16	INFO	タイムアウト管理: 残り実行時間 約179秒		kmakita1201@gmail.com
+2025/08/09 14:48:19	DEBUG	権利確定の生の取得値: コード=208A, 値="6月"		kmakita1201@gmail.com
+2025/08/09 14:48:20	DEBUG	権利確定の生の取得値: コード=2169, 値="6月, 12月"		kmakita1201@gmail.com
+2025/08/09 14:48:22	DEBUG	権利確定の生の取得値: コード=2296, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 14:48:24	DEBUG	権利確定の生の取得値: コード=2393, 値="3月"		kmakita1201@gmail.com
+2025/08/09 14:48:25	DEBUG	Attempting to update 権利確定 data	{"batchStart":8,"colIndex":9,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:48:27	DEBUG	分配金の正規表現マッチ失敗: コード=208A, URL=https://finance.yahoo.co.jp/quote/208A.T		kmakita1201@gmail.com
+2025/08/09 14:48:29	DEBUG	分配金の正規表現マッチ失敗: コード=208A, URL=https://finance.yahoo.co.jp/quote/208A.T		kmakita1201@gmail.com
+2025/08/09 14:48:31	DEBUG	分配金の正規表現マッチ失敗: コード=2169, URL=https://finance.yahoo.co.jp/quote/2169.T		kmakita1201@gmail.com
+2025/08/09 14:48:32	DEBUG	分配金の正規表現マッチ失敗: コード=2169, URL=https://finance.yahoo.co.jp/quote/2169.T		kmakita1201@gmail.com
+2025/08/09 14:48:33	DEBUG	分配金の正規表現マッチ失敗: コード=2296, URL=https://finance.yahoo.co.jp/quote/2296.T		kmakita1201@gmail.com
+2025/08/09 14:48:35	DEBUG	分配金の正規表現マッチ失敗: コード=2296, URL=https://finance.yahoo.co.jp/quote/2296.T		kmakita1201@gmail.com
+2025/08/09 14:48:36	DEBUG	分配金の正規表現マッチ失敗: コード=2393, URL=https://finance.yahoo.co.jp/quote/2393.T		kmakita1201@gmail.com
+2025/08/09 14:48:36	DEBUG	分配金の正規表現マッチ失敗: コード=2393, URL=https://finance.yahoo.co.jp/quote/2393.T		kmakita1201@gmail.com
+2025/08/09 14:48:37	DEBUG	Attempting to update 分配金 data	{"batchStart":8,"colIndex":6,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:48:38	DEBUG	配当金の生の取得値: コード=208A, 値="80"		kmakita1201@gmail.com
+2025/08/09 14:48:39	DEBUG	配当金の処理後の値: コード=208A, 元の値="80", 処理後="80"		kmakita1201@gmail.com
+2025/08/09 14:48:41	DEBUG	配当金の生の取得値: コード=2169, 値="74"		kmakita1201@gmail.com
+2025/08/09 14:48:41	DEBUG	配当金の処理後の値: コード=2169, 元の値="74", 処理後="74"		kmakita1201@gmail.com
+2025/08/09 14:48:43	DEBUG	配当金の生の取得値: コード=2296, 値="320"		kmakita1201@gmail.com
+2025/08/09 14:48:44	DEBUG	配当金の処理後の値: コード=2296, 元の値="320", 処理後="320"		kmakita1201@gmail.com
+2025/08/09 14:48:45	DEBUG	配当金の生の取得値: コード=2393, 値="72"		kmakita1201@gmail.com
+2025/08/09 14:48:45	DEBUG	配当金の処理後の値: コード=2393, 元の値="72", 処理後="72"		kmakita1201@gmail.com
+2025/08/09 14:48:46	DEBUG	Attempting to update 配当金 data	{"batchStart":8,"colIndex":5,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:48:48	DEBUG	EPS(予想)の生の取得値: コード=208A, 値="183.3"		kmakita1201@gmail.com
+2025/08/09 14:48:50	DEBUG	EPS(予想)の生の取得値: コード=2169, 値="92.1"		kmakita1201@gmail.com
+2025/08/09 14:48:51	DEBUG	EPS(予想)の生の取得値: コード=2296, 値="308.5"		kmakita1201@gmail.com
+2025/08/09 14:48:53	DEBUG	EPS(予想)の生の取得値: コード=2393, 値="122.3"		kmakita1201@gmail.com
+2025/08/09 14:48:53	DEBUG	Attempting to update EPS(予想) data	{"batchStart":8,"colIndex":7,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:48:55	DEBUG	BPSの生の取得値: コード=208A, 値="820"		kmakita1201@gmail.com
+2025/08/09 14:48:56	DEBUG	BPSの生の取得値: コード=2169, 値="1,309"		kmakita1201@gmail.com
+2025/08/09 14:48:58	DEBUG	BPSの生の取得値: コード=2296, 値="5,072"		kmakita1201@gmail.com
+2025/08/09 14:48:59	DEBUG	BPSの生の取得値: コード=2393, 値="1,082"		kmakita1201@gmail.com
+2025/08/09 14:49:00	DEBUG	Attempting to update BPS data	{"batchStart":8,"colIndex":8,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:49:03	DEBUG	権利確定の生の取得値: コード=2768, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 14:49:04	DEBUG	権利確定の生の取得値: コード=2914, 値="6月, 12月"		kmakita1201@gmail.com
+2025/08/09 14:49:06	DEBUG	権利確定の生の取得値: コード=3003, 値="6月, 12月"		kmakita1201@gmail.com
+2025/08/09 14:49:08	DEBUG	権利確定の生の取得値: コード=3050, 値="2月, 8月"		kmakita1201@gmail.com
+2025/08/09 14:49:08	DEBUG	Attempting to update 権利確定 data	{"batchStart":12,"colIndex":9,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:49:11	DEBUG	分配金の正規表現マッチ失敗: コード=2768, URL=https://finance.yahoo.co.jp/quote/2768.T		kmakita1201@gmail.com
+2025/08/09 14:49:12	DEBUG	分配金の正規表現マッチ失敗: コード=2768, URL=https://finance.yahoo.co.jp/quote/2768.T		kmakita1201@gmail.com
+2025/08/09 14:49:14	DEBUG	分配金の正規表現マッチ失敗: コード=2914, URL=https://finance.yahoo.co.jp/quote/2914.T		kmakita1201@gmail.com
+2025/08/09 14:49:15	DEBUG	分配金の正規表現マッチ失敗: コード=2914, URL=https://finance.yahoo.co.jp/quote/2914.T		kmakita1201@gmail.com
+2025/08/09 14:49:17	DEBUG	分配金の正規表現マッチ失敗: コード=3003, URL=https://finance.yahoo.co.jp/quote/3003.T		kmakita1201@gmail.com
+2025/08/09 14:49:18	DEBUG	分配金の正規表現マッチ失敗: コード=3003, URL=https://finance.yahoo.co.jp/quote/3003.T		kmakita1201@gmail.com
+2025/08/09 14:49:20	DEBUG	分配金の正規表現マッチ失敗: コード=3050, URL=https://finance.yahoo.co.jp/quote/3050.T		kmakita1201@gmail.com
+2025/08/09 14:49:22	DEBUG	分配金の正規表現マッチ失敗: コード=3050, URL=https://finance.yahoo.co.jp/quote/3050.T		kmakita1201@gmail.com
+2025/08/09 14:49:22	DEBUG	Attempting to update 分配金 data	{"batchStart":12,"colIndex":6,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:49:24	DEBUG	配当金の生の取得値: コード=2768, 値="165"		kmakita1201@gmail.com
+2025/08/09 14:49:24	DEBUG	配当金の処理後の値: コード=2768, 元の値="165", 処理後="165"		kmakita1201@gmail.com
+2025/08/09 14:49:26	DEBUG	配当金の生の取得値: コード=2914, 値="208"		kmakita1201@gmail.com
+2025/08/09 14:49:26	DEBUG	配当金の処理後の値: コード=2914, 元の値="208", 処理後="208"		kmakita1201@gmail.com
+2025/08/09 14:49:28	DEBUG	配当金の生の取得値: コード=3003, 値="57"		kmakita1201@gmail.com
+2025/08/09 14:49:29	DEBUG	配当金の処理後の値: コード=3003, 元の値="57", 処理後="57"		kmakita1201@gmail.com
+2025/08/09 14:49:30	DEBUG	配当金の生の取得値: コード=3050, 値="46"		kmakita1201@gmail.com
+2025/08/09 14:49:31	DEBUG	配当金の処理後の値: コード=3050, 元の値="46", 処理後="46"		kmakita1201@gmail.com
+2025/08/09 14:49:32	DEBUG	Attempting to update 配当金 data	{"batchStart":12,"colIndex":5,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:49:33	DEBUG	EPS(予想)の生の取得値: コード=2768, 値="547.2"		kmakita1201@gmail.com
+2025/08/09 14:49:35	DEBUG	EPS(予想)の生の取得値: コード=2914, 値="278.2"		kmakita1201@gmail.com
+2025/08/09 14:49:36	DEBUG	EPS(予想)の生の取得値: コード=3003, 値="142.1"		kmakita1201@gmail.com
+2025/08/09 14:49:38	DEBUG	EPS(予想)の生の取得値: コード=3050, 値="146.3"		kmakita1201@gmail.com
+2025/08/09 14:49:39	DEBUG	Attempting to update EPS(予想) data	{"batchStart":12,"colIndex":7,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:49:41	DEBUG	BPSの生の取得値: コード=2768, 値="4,508"		kmakita1201@gmail.com
+2025/08/09 14:49:42	DEBUG	BPSの生の取得値: コード=2914, 値="2,287"		kmakita1201@gmail.com
+2025/08/09 14:49:43	DEBUG	BPSの生の取得値: コード=3003, 値="1,117"		kmakita1201@gmail.com
+2025/08/09 14:49:45	DEBUG	BPSの生の取得値: コード=3050, 値="2,020"		kmakita1201@gmail.com
+2025/08/09 14:49:45	DEBUG	Attempting to update BPS data	{"batchStart":12,"colIndex":8,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:49:49	DEBUG	権利確定の生の取得値: コード=3076, 値="6月, 12月"		kmakita1201@gmail.com
+2025/08/09 14:49:51	DEBUG	権利確定の生の取得値: コード=3231, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 14:49:51	DEBUG	権利確定の正規表現マッチ失敗: コード=3269, URL=https://minkabu.jp/stock/3269/dividend		kmakita1201@gmail.com
+2025/08/09 14:49:52	DEBUG	権利確定の正規表現マッチ失敗: コード=3269, URL=https://minkabu.jp/stock/3269/dividend		kmakita1201@gmail.com
+2025/08/09 14:49:54	DEBUG	権利確定の生の取得値: コード=3407, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 14:49:54	DEBUG	Attempting to update 権利確定 data	{"batchStart":16,"colIndex":9,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:49:56	DEBUG	分配金の正規表現マッチ失敗: コード=3076, URL=https://finance.yahoo.co.jp/quote/3076.T		kmakita1201@gmail.com
+2025/08/09 14:49:58	DEBUG	分配金の正規表現マッチ失敗: コード=3076, URL=https://finance.yahoo.co.jp/quote/3076.T		kmakita1201@gmail.com
+2025/08/09 14:49:58	DEBUG	分配金の正規表現マッチ失敗: コード=3231, URL=https://finance.yahoo.co.jp/quote/3231.T		kmakita1201@gmail.com
+2025/08/09 14:50:00	DEBUG	分配金の正規表現マッチ失敗: コード=3231, URL=https://finance.yahoo.co.jp/quote/3231.T		kmakita1201@gmail.com
+2025/08/09 14:50:01	DEBUG	分配金の生の取得値: コード=3269, 値="6,310.00"		kmakita1201@gmail.com
+2025/08/09 14:50:03	DEBUG	分配金の正規表現マッチ失敗: コード=3407, URL=https://finance.yahoo.co.jp/quote/3407.T		kmakita1201@gmail.com
+2025/08/09 14:50:04	DEBUG	分配金の正規表現マッチ失敗: コード=3407, URL=https://finance.yahoo.co.jp/quote/3407.T		kmakita1201@gmail.com
+2025/08/09 14:50:04	DEBUG	Attempting to update 分配金 data	{"batchStart":16,"colIndex":6,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:50:06	DEBUG	配当金の生の取得値: コード=3076, 値="100"		kmakita1201@gmail.com
+2025/08/09 14:50:06	DEBUG	配当金の処理後の値: コード=3076, 元の値="100", 処理後="100"		kmakita1201@gmail.com
+2025/08/09 14:50:07	DEBUG	配当金の生の取得値: コード=3231, 値="36"		kmakita1201@gmail.com
+2025/08/09 14:50:08	DEBUG	配当金の処理後の値: コード=3231, 元の値="36", 処理後="36"		kmakita1201@gmail.com
+2025/08/09 14:50:09	DEBUG	配当金の正規表現マッチ失敗: コード=3269, URL=https://minkabu.jp/stock/3269/dividend		kmakita1201@gmail.com
+2025/08/09 14:50:09	DEBUG	"配当金のHTML内容(最初の500文字): <!DOCTYPE html>
+<html prefix=""og: https://ogp.me/ns#"" class=""mk_layout"" lang=""ja"">
+<head>
+  <meta charset=""UTF-8"">
+<title>みんかぶ - 資産形成のための情報メディア</title>
+<link href=""https://assets.minkabu.jp/stylesheets/notosansjapanese.css"" rel=""stylesheet"" />
+<meta content=""みんかぶ - 資産形成のための情報メディア"" name=""description"" />
+<meta content=""みんなの株式,みんなの株,みんかぶ,株価予想,minkabu,みんなのかぶしき,みん株,株,株式,銘柄,株情報,株式投資,投資情報"" name=""keywords"" />
+
+<link rel=""shortcut icon"" href=""https://minkabu.jp/favicon.ico"" />
+<link rel=""help"" href=""http"		kmakita1201@gmail.com
+2025/08/09 14:50:10	DEBUG	配当金の正規表現: /<span class="dividend-state__amount__integer">(\d+)\.<\/span><span class="dividend-state__amount__decimal">(\d+)<\/span><span class="dividend-state__amount__yen">円<\/span>/s		kmakita1201@gmail.com
+2025/08/09 14:50:10	DEBUG	配当金の正規表現マッチ失敗: コード=3269, URL=https://minkabu.jp/stock/3269/dividend		kmakita1201@gmail.com
+2025/08/09 14:50:11	DEBUG	"配当金のHTML内容(最初の500文字): <!DOCTYPE html>
+<html prefix=""og: https://ogp.me/ns#"" class=""mk_layout"" lang=""ja"">
+<head>
+  <meta charset=""UTF-8"">
+<title>みんかぶ - 資産形成のための情報メディア</title>
+<link href=""https://assets.minkabu.jp/stylesheets/notosansjapanese.css"" rel=""stylesheet"" />
+<meta content=""みんかぶ - 資産形成のための情報メディア"" name=""description"" />
+<meta content=""みんなの株式,みんなの株,みんかぶ,株価予想,minkabu,みんなのかぶしき,みん株,株,株式,銘柄,株情報,株式投資,投資情報"" name=""keywords"" />
+
+<link rel=""shortcut icon"" href=""https://minkabu.jp/favicon.ico"" />
+<link rel=""help"" href=""http"		kmakita1201@gmail.com
+2025/08/09 14:50:12	DEBUG	配当金の正規表現: /<span class="dividend-state__amount__integer">(\d+)\.<\/span><span class="dividend-state__amount__decimal">(\d+)<\/span><span class="dividend-state__amount__yen">円<\/span>/s		kmakita1201@gmail.com
+2025/08/09 14:50:13	DEBUG	配当金の生の取得値: コード=3407, 値="40"		kmakita1201@gmail.com
+2025/08/09 14:50:13	DEBUG	配当金の処理後の値: コード=3407, 元の値="40", 処理後="40"		kmakita1201@gmail.com
+2025/08/09 14:50:14	DEBUG	Attempting to update 配当金 data	{"batchStart":16,"colIndex":5,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:50:15	DEBUG	EPS(予想)の生の取得値: コード=3076, 値="410.2"		kmakita1201@gmail.com
+2025/08/09 14:50:17	DEBUG	EPS(予想)の生の取得値: コード=3231, 値="87.3"		kmakita1201@gmail.com
+2025/08/09 14:50:19	DEBUG	EPS(予想)の正規表現マッチ失敗: コード=3269, URL=https://kabuyoho.jp/reportTarget?bcode=3269		kmakita1201@gmail.com
+2025/08/09 14:50:21	DEBUG	EPS(予想)の正規表現マッチ失敗: コード=3269, URL=https://kabuyoho.jp/reportTarget?bcode=3269		kmakita1201@gmail.com
+2025/08/09 14:50:22	DEBUG	EPS(予想)の生の取得値: コード=3407, 値="92.0"		kmakita1201@gmail.com
+2025/08/09 14:50:23	DEBUG	Attempting to update EPS(予想) data	{"batchStart":16,"colIndex":7,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:50:24	DEBUG	BPSの生の取得値: コード=3076, 値="1,986"		kmakita1201@gmail.com
+2025/08/09 14:50:25	DEBUG	BPSの生の取得値: コード=3231, 値="870"		kmakita1201@gmail.com
+2025/08/09 14:50:26	DEBUG	BPSの正規表現マッチ失敗: コード=3269, URL=https://kabuyoho.jp/reportTarget?bcode=3269		kmakita1201@gmail.com
+2025/08/09 14:50:28	DEBUG	BPSの正規表現マッチ失敗: コード=3269, URL=https://kabuyoho.jp/reportTarget?bcode=3269		kmakita1201@gmail.com
+2025/08/09 14:50:30	DEBUG	BPSの生の取得値: コード=3407, 値="1,342"		kmakita1201@gmail.com
+2025/08/09 14:50:30	DEBUG	Attempting to update BPS data	{"batchStart":16,"colIndex":8,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:50:33	DEBUG	権利確定の生の取得値: コード=3597, 値="6月"		kmakita1201@gmail.com
+2025/08/09 14:50:35	DEBUG	権利確定の生の取得値: コード=3817, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 14:50:36	DEBUG	権利確定の生の取得値: コード=3834, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 14:50:38	DEBUG	権利確定の生の取得値: コード=4008, 値="3月, 9月"		kmakita1201@gmail.com
+2025/08/09 14:50:38	DEBUG	Attempting to update 権利確定 data	{"batchStart":20,"colIndex":9,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:50:40	DEBUG	分配金の正規表現マッチ失敗: コード=3597, URL=https://finance.yahoo.co.jp/quote/3597.T		kmakita1201@gmail.com
+2025/08/09 14:50:43	DEBUG	分配金の正規表現マッチ失敗: コード=3597, URL=https://finance.yahoo.co.jp/quote/3597.T		kmakita1201@gmail.com
+2025/08/09 14:50:45	DEBUG	分配金の正規表現マッチ失敗: コード=3817, URL=https://finance.yahoo.co.jp/quote/3817.T		kmakita1201@gmail.com
+2025/08/09 14:50:48	DEBUG	分配金の正規表現マッチ失敗: コード=3817, URL=https://finance.yahoo.co.jp/quote/3817.T		kmakita1201@gmail.com
+2025/08/09 14:50:50	DEBUG	分配金の正規表現マッチ失敗: コード=3834, URL=https://finance.yahoo.co.jp/quote/3834.T		kmakita1201@gmail.com
+2025/08/09 14:50:51	DEBUG	分配金の正規表現マッチ失敗: コード=3834, URL=https://finance.yahoo.co.jp/quote/3834.T		kmakita1201@gmail.com
+2025/08/09 14:50:53	DEBUG	分配金の正規表現マッチ失敗: コード=4008, URL=https://finance.yahoo.co.jp/quote/4008.T		kmakita1201@gmail.com
+2025/08/09 14:50:54	DEBUG	分配金の正規表現マッチ失敗: コード=4008, URL=https://finance.yahoo.co.jp/quote/4008.T		kmakita1201@gmail.com
+2025/08/09 14:50:55	DEBUG	Attempting to update 分配金 data	{"batchStart":20,"colIndex":6,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:50:57	DEBUG	配当金の生の取得値: コード=3597, 値="500"		kmakita1201@gmail.com
+2025/08/09 14:50:57	DEBUG	配当金の処理後の値: コード=3597, 元の値="500", 処理後="500"		kmakita1201@gmail.com
+2025/08/09 14:50:59	DEBUG	配当金の生の取得値: コード=3817, 値="180"		kmakita1201@gmail.com
+2025/08/09 14:51:00	DEBUG	配当金の処理後の値: コード=3817, 元の値="180", 処理後="180"		kmakita1201@gmail.com
+2025/08/09 14:51:01	DEBUG	配当金の生の取得値: コード=3834, 値="25"		kmakita1201@gmail.com
+2025/08/09 14:51:01	DEBUG	配当金の処理後の値: コード=3834, 元の値="25", 処理後="25"		kmakita1201@gmail.com
+2025/08/09 14:51:02	DEBUG	配当金の生の取得値: コード=4008, 値="200"		kmakita1201@gmail.com
+2025/08/09 14:51:02	DEBUG	配当金の処理後の値: コード=4008, 元の値="200", 処理後="200"		kmakita1201@gmail.com
+2025/08/09 14:51:03	DEBUG	Attempting to update 配当金 data	{"batchStart":20,"colIndex":5,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:51:05	DEBUG	EPS(予想)の生の取得値: コード=3597, 値="468.4"		kmakita1201@gmail.com
+2025/08/09 14:51:06	DEBUG	EPS(予想)の生の取得値: コード=3817, 値="387.8"		kmakita1201@gmail.com
+2025/08/09 14:51:08	DEBUG	EPS(予想)の生の取得値: コード=3834, 値="63.0"		kmakita1201@gmail.com
+2025/08/09 14:51:10	DEBUG	EPS(予想)の生の取得値: コード=4008, 値="511.2"		kmakita1201@gmail.com
+2025/08/09 14:51:11	DEBUG	Attempting to update EPS(予想) data	{"batchStart":20,"colIndex":7,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:51:13	DEBUG	BPSの生の取得値: コード=3597, 値="13,227"		kmakita1201@gmail.com
+2025/08/09 14:51:15	DEBUG	BPSの生の取得値: コード=3817, 値="2,454"		kmakita1201@gmail.com
+2025/08/09 14:51:16	DEBUG	BPSの生の取得値: コード=3834, 値="484"		kmakita1201@gmail.com
+2025/08/09 14:51:17	DEBUG	BPSの生の取得値: コード=4008, 値="7,192"		kmakita1201@gmail.com
+2025/08/09 14:51:18	DEBUG	Attempting to update BPS data	{"batchStart":20,"colIndex":8,"columnDataLength":4,"sheetReferenceExists":true,"sheetReferenceName":"_Reference"}	kmakita1201@gmail.com
+2025/08/09 14:51:19	WARN	安全マージンのため処理を中断しました（20/119件完了）。次回は20番目から再開します。		kmakita1201@gmail.com
+2025/08/09 14:51:20	DEBUG	実行タイマーをクリア		kmakita1201@gmail.com
+2025/08/09 14:51:21	INFO	タイムアウト管理: クリーンアップ完了		kmakita1201@gmail.com
